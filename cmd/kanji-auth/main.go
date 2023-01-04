@@ -1,0 +1,86 @@
+package main
+
+import (
+	"context"
+	"fmt"
+	kanjiJwt "github.com/Hanekawa-chan/kanji-jwt"
+	"github.com/rs/zerolog"
+	"kanji-auth/internal/app"
+	"kanji-auth/internal/database"
+	"kanji-auth/internal/httpserver"
+	"kanji-auth/internal/services/auth"
+	"kanji-auth/internal/services/user"
+	"kanji-auth/internal/version"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+)
+
+func main() {
+	//Print version and commit sha
+	log.Println("Loading Mailing - v", version.Version, "| Commit:", version.Commit)
+
+	// Parse all configs form env
+	cfg, err := app.Parse()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(cfg)
+
+	level, err := zerolog.ParseLevel(cfg.Logger.LogLevel)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	zl := zerolog.New(os.Stdout).Level(level)
+
+	db, err := database.NewAdapter(&zl, cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	jwtGenerator, err := kanjiJwt.New(cfg.JWTConfig.SecretKey)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	userClient := user.NewUserClient(&zl, cfg)
+
+	authService := auth.NewAuth(&zl, db, jwtGenerator, userClient, cfg)
+	service := app.NewService(&zl, cfg, authService)
+	httpServerAdapter := httpserver.NewAdapter(&zl, cfg, service)
+
+	// Channels for errors and os signals
+	stop := make(chan error, 1)
+	osSig := make(chan os.Signal, 1)
+	signal.Notify(osSig, syscall.SIGINT, syscall.SIGTERM)
+
+	// Receive errors form start bot func into error channel
+	go func(stop chan<- error) {
+		stop <- httpServerAdapter.ListenAndServe()
+	}(stop)
+
+	// Blocking select
+	select {
+	case sig := <-osSig:
+		zl.Info().Msgf("Received os syscall signal %v", sig)
+	case err := <-stop:
+		zl.Error().Err(err).Msg("Received Error signal")
+	}
+
+	// Shutdown code
+	zl.Info().Msg("Shutting down...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+
+	if err := httpServerAdapter.Shutdown(ctx); err != nil {
+		zl.Error().Err(err).Msg("Error shutting down the HTTP server!")
+	}
+
+	time.Sleep(time.Second * 2)
+
+	zl.Info().Msg("Shutdown - success")
+}
