@@ -1,0 +1,3 @@
+[submodule "kanji-go-models"]
+	path = kanji-go-models
+	url = https://github.com/Hanekawa-chan/kanji-go-models

@@ -12,6 +12,7 @@ type GoogleAuthUser struct {
 }
 
 type AuthRequest struct {
+	AuthType
 }
 
 type SignupRequest struct {
@@ -33,3 +34,10 @@ type PairAuth struct {
 	Email    string
 	Password string
 }
+
+type AuthType interface {
+	isAuthRequestAuthType()
+}
+
+func (*PairAuth) isAuthRequestAuthType()   {}
+func (*GoogleAuth) isAuthRequestAuthType() {}

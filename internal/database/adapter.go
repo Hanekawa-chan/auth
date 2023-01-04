@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
@@ -47,3 +48,7 @@ func NewAdapter(logger *zerolog.Logger, config *app.Config) (app.Database, error
 	}
 	return a, err
 }
+
+var (
+	ErrNotFound = errors.New("rows not found")
+)

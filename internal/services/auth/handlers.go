@@ -2,17 +2,27 @@ package auth
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"github.com/google/uuid"
+	"golang.org/x/crypto/argon2"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"io"
+	"kanji-auth/internal/database"
 	"kanji-auth/internal/services/models"
 	"net/http"
 )
 
-func (a adapter) GetUserInfoFromGoogleAPI(ctx context.Context, code string) (*models.GoogleAuthUser, error) {
+const (
+	Memory      = 65536
+	Iterations  = 3
+	Parallelism = 2
+	KeyLength   = 32
+)
+
+func (a *adapter) GetUserInfoFromGoogleAPI(ctx context.Context, code string) (*models.GoogleAuthUser, error) {
 	var userInfo models.GoogleAuthUser
 
 	configGoogleAPI := &oauth2.Config{
@@ -54,12 +64,78 @@ func (a adapter) GetUserInfoFromGoogleAPI(ctx context.Context, code string) (*mo
 	return &userInfo, nil
 }
 
-func (a adapter) Auth(ctx context.Context, req *models.AuthRequest) (*models.Session, error) {
-	//TODO implement me
-	panic("implement me")
+func (a *adapter) Auth(ctx context.Context, req *models.AuthRequest) (*models.Session, error) {
+	authUser, err := a.getAuthUser(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	var existUser *models.Credentials
+	switch req.AuthType.(type) {
+	case *models.GoogleAuth:
+		user, err := a.db.GetUserByGoogleEmail(ctx, authUser.Email)
+		if err != nil {
+			return nil, err
+		}
+		existUser, err = a.db.GetUserByID(ctx, user.ID)
+		if err != nil {
+			return nil, err
+		}
+	case *models.PairAuth:
+		existUser, err = a.db.GetUserByEmail(ctx, authUser.Email)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if req.AuthType.(*models.PairAuth) != nil {
+		if err == database.ErrNotFound {
+			uuID, err := uuid.NewUUID()
+			if err != nil {
+				return nil, err
+			}
+			authHash, err := generateAuthHash()
+			if err != nil {
+				return nil, err
+			}
+
+			user := &models.Credentials{
+				ID:       uuID,
+				Email:    authUser.Email,
+				Password: authUser.Password,
+				AuthHash: authHash,
+			}
+
+			if err := a.db.CreateUser(ctx, user); err != nil {
+				return nil, err
+			}
+
+			return &models.Session{
+				AuthHash: authHash,
+			}, nil
+		}
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if len(existUser.AuthHash) > 0 {
+		return &models.Session{
+			AuthHash: existUser.AuthHash,
+		}, nil
+	}
+
+	token, err := a.generateJWT(existUser.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &models.Session{
+		Token: token,
+	}, nil
 }
 
-func (a adapter) Signup(ctx context.Context, req *models.SignupRequest) (*models.Session, error) {
+func (a *adapter) Signup(ctx context.Context, req *models.SignupRequest) (*models.Session, error) {
 	if req.AuthHash == "" {
 		return nil, errors.New("authHash is required")
 	}
@@ -100,4 +176,69 @@ func (a adapter) Signup(ctx context.Context, req *models.SignupRequest) (*models
 	return &models.Session{
 		Token: token,
 	}, nil
+}
+
+func (a *adapter) getAuthUser(ctx context.Context, req *models.AuthRequest) (*models.Credentials, error) {
+	switch req.AuthType.(type) {
+	case *models.GoogleAuth:
+		v := req.AuthType.(*models.GoogleAuth)
+		return a.getUserByGoogle(ctx, v)
+	case *models.PairAuth:
+		v := req.AuthType.(*models.PairAuth)
+		return a.getUserByPair(ctx, v.Email, v.Password)
+	}
+	return nil, errors.New("invalid auth_type")
+}
+
+func (a *adapter) getUserByGoogle(ctx context.Context, req *models.GoogleAuth) (*models.Credentials, error) {
+	googleUser, err := a.GetUserInfoFromGoogleAPI(ctx, req.Code)
+	if err != nil {
+		return nil, err
+	}
+	return &models.Credentials{Email: googleUser.Email}, nil
+}
+
+func (a *adapter) getUserByPair(ctx context.Context, login string, password string) (*models.Credentials, error) {
+	err := a.validateEmail(login)
+	if err != nil {
+		return nil, errors.New("email isn't valid")
+	}
+
+	err = a.validatePassword(password)
+	if err != nil {
+		return nil, err
+	}
+
+	var reverse string
+	for _, c := range password {
+		reverse = string(c) + reverse
+	}
+	salt, _ := base64.RawStdEncoding.DecodeString(reverse)
+
+	hash, err := generateFromPassword(password, salt)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := a.db.GetUserByEmail(ctx, login)
+	if err == database.ErrNotFound {
+		return &models.Credentials{
+			Email:    login,
+			Password: base64.RawStdEncoding.EncodeToString(hash),
+		}, nil
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	if user.Password != base64.RawStdEncoding.EncodeToString(hash) {
+		return nil, errors.New("password is wrong")
+	}
+	return user, nil
+}
+
+func generateFromPassword(password string, salt []byte) (hash []byte, err error) {
+	hash = argon2.IDKey([]byte(password), salt, Iterations, Memory, Parallelism, KeyLength)
+	return hash, nil
 }

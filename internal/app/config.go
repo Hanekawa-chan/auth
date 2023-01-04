@@ -20,56 +20,56 @@ type LoggerConfig struct {
 }
 
 func Parse() (*Config, error) {
-	var cfg *Config
-	var logger *LoggerConfig
-	var db *config.DBConfig
-	var auth *config.AuthConfig
-	var httpConfig *config.HTTPConfig
-	var jwtConfig *config.JWTConfig
-	var userConfig *config.UserConfig
+	cfg := Config{}
+	logger := LoggerConfig{}
+	db := config.DBConfig{}
+	auth := config.AuthConfig{}
+	httpConfig := config.HTTPConfig{}
+	jwtConfig := config.JWTConfig{}
+	userConfig := config.UserConfig{}
 
-	err := envconfig.Process("kanji_auth", logger)
+	err := envconfig.Process("kanji_auth", &logger)
 	if err != nil {
 		log.Err(err).Msg("logger config error")
 		return nil, err
 	}
 
-	err = envconfig.Process("kanji_auth", db)
+	err = envconfig.Process("kanji_auth", &db)
 	if err != nil {
 		log.Err(err).Msg("db config error")
 		return nil, err
 	}
 
-	err = envconfig.Process("kanji_auth", auth)
+	err = envconfig.Process("kanji_auth", &auth)
 	if err != nil {
 		log.Err(err).Msg("auth config error")
 		return nil, err
 	}
 
-	err = envconfig.Process("kanji_auth", httpConfig)
+	err = envconfig.Process("kanji_auth", &httpConfig)
 	if err != nil {
 		log.Err(err).Msg("http config error")
 		return nil, err
 	}
 
-	err = envconfig.Process("kanji_auth", jwtConfig)
+	err = envconfig.Process("kanji_auth", &jwtConfig)
 	if err != nil {
 		log.Err(err).Msg("http config error")
 		return nil, err
 	}
 
-	err = envconfig.Process("kanji_auth", userConfig)
+	err = envconfig.Process("kanji_auth", &userConfig)
 	if err != nil {
 		log.Err(err).Msg("http config error")
 		return nil, err
 	}
 
-	cfg.Auth = auth
-	cfg.DB = db
-	cfg.Logger = logger
-	cfg.HTTPServer = httpConfig
-	cfg.JWTConfig = jwtConfig
-	cfg.User = userConfig
+	cfg.Auth = &auth
+	cfg.DB = &db
+	cfg.Logger = &logger
+	cfg.HTTPServer = &httpConfig
+	cfg.JWTConfig = &jwtConfig
+	cfg.User = &userConfig
 
-	return cfg, nil
+	return &cfg, nil
 }

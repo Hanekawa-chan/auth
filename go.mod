@@ -3,7 +3,7 @@ module kanji-auth
 go 1.19
 
 require (
-	github.com/Hanekawa-chan/kanji-jwt v0.0.0-20230104110146-f36d616f9dfa
+	github.com/Hanekawa-chan/kanji-jwt v0.0.0-20230104143446-052055c72541
 	github.com/go-chi/chi v1.5.4
 	github.com/google/uuid v1.3.0
 	github.com/jmoiron/sqlx v1.3.5
@@ -13,6 +13,7 @@ require (
 	github.com/qustavo/sqlhooks/v2 v2.1.0
 	github.com/rs/zerolog v1.28.0
 	go.uber.org/ratelimit v0.2.0
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/oauth2 v0.3.0
 )
 

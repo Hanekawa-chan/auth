@@ -25,6 +25,10 @@ type Database interface {
 	GetUserByAuthHash(ctx context.Context, hash string) (*models.Credentials, error)
 	UpdateId(ctx context.Context, id uuid.UUID, hash string) error
 	RemoveAuthHash(ctx context.Context, id uuid.UUID) error
+	CreateUser(ctx context.Context, user *models.Credentials) error
+	GetUserByEmail(ctx context.Context, login string) (*models.Credentials, error)
+	GetUserByGoogleEmail(ctx context.Context, email string) (*models.Credentials, error)
+	GetUserByID(ctx context.Context, id uuid.UUID) (*models.Credentials, error)
 }
 
 type JWTGenerator interface {

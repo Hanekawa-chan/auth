@@ -14,7 +14,7 @@ type adapter struct {
 }
 
 func NewAuth(logger *zerolog.Logger, db app.Database, jwtGenerator app.JWTGenerator, user app.User, config *app.Config) app.Auth {
-	return adapter{
+	return &adapter{
 		logger:       logger,
 		db:           db,
 		jwtGenerator: jwtGenerator,

@@ -6,5 +6,9 @@ type CreateUserRequest struct {
 }
 
 type User struct {
-	Id string
+	Id       string
+	Name     string
+	Username string
+	Email    string
+	Country  string
 }

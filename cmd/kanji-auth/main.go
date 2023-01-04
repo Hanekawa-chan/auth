@@ -34,23 +34,25 @@ func main() {
 		log.Fatal(err)
 	}
 
-	zl := zerolog.New(os.Stdout).Level(level)
+	logger := zerolog.New(os.Stdout).Level(level)
 
-	db, err := database.NewAdapter(&zl, cfg)
+	zl := &logger
+
+	db, err := database.NewAdapter(zl, cfg)
 	if err != nil {
-		log.Fatal(err)
+		zl.Fatal().Err(err).Msg("Database init")
 	}
 
 	jwtGenerator, err := kanjiJwt.New(cfg.JWTConfig.SecretKey)
 	if err != nil {
-		log.Fatal(err)
+		zl.Fatal().Err(err).Msg("JWT init")
 	}
 
-	userClient := user.NewUserClient(&zl, cfg)
+	userClient := user.NewUserClient(zl, cfg)
 
-	authService := auth.NewAuth(&zl, db, jwtGenerator, userClient, cfg)
-	service := app.NewService(&zl, cfg, authService)
-	httpServerAdapter := httpserver.NewAdapter(&zl, cfg, service)
+	authService := auth.NewAuth(zl, db, jwtGenerator, userClient, cfg)
+	service := app.NewService(zl, cfg, authService)
+	httpServerAdapter := httpserver.NewAdapter(zl, cfg, service)
 
 	// Channels for errors and os signals
 	stop := make(chan error, 1)
