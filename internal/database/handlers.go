@@ -37,6 +37,13 @@ func (a adapter) GetUserByGoogleEmail(ctx context.Context, email string) (*model
 }
 
 func (a adapter) GetUserByID(ctx context.Context, id uuid.UUID) (*models.Credentials, error) {
-	//TODO implement me
-	panic("implement me")
+	var err error
+	creds := models.Credentials{}
+	query := "select * from credentials where id=$1"
+
+	err = a.db.SelectContext(ctx, &creds, query, id)
+	if err != nil {
+		return nil, err
+	}
+	return &creds, err
 }
