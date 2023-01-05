@@ -1,0 +1,26 @@
+version: "3.9"
+services:
+  auth_service:
+    build: .
+    container_name: auth_service
+    ports:
+      - "6080:6080"
+    restart: always
+    environment:
+      KANJI_AUTH_POSTGRES_NAME: "auth"
+      KANJI_AUTH_POSTGRES_HOST: "auth_db"
+      KANJI_AUTH_POSTGRES_PORT: 5432
+      KANJI_AUTH_POSTGRES_USER: "user"
+      KANJI_AUTH_POSTGRES_PASSWORD: "password"
+      KANJI_AUTH_JWT_SECRET_KEY: "somekey"
+  auth_db:
+    image: postgres
+    container_name: auth_db
+    restart: always
+    environment:
+      POSTGRES_DB: "auth"
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: "password"
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+    ports:
+      - "5432:5432"

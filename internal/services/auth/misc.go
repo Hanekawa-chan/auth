@@ -2,7 +2,6 @@ package auth
 
 import (
 	"crypto/rand"
-	"encoding/base64"
 	"errors"
 	"github.com/google/uuid"
 	"net/mail"
@@ -42,7 +41,7 @@ func generateAuthHash() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	hash := base64.URLEncoding.EncodeToString(b)
+	hash := string(b)
 
 	return hash, err
 }

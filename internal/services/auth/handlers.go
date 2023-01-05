@@ -2,24 +2,16 @@ package auth
 
 import (
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"github.com/google/uuid"
-	"golang.org/x/crypto/argon2"
+	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"io"
 	"kanji-auth/internal/database"
 	"kanji-auth/internal/services/models"
 	"net/http"
-)
-
-const (
-	Memory      = 65536
-	Iterations  = 3
-	Parallelism = 2
-	KeyLength   = 32
 )
 
 func (a *adapter) GetUserInfoFromGoogleAPI(ctx context.Context, code string) (*models.GoogleAuthUser, error) {
@@ -98,11 +90,15 @@ func (a *adapter) Auth(ctx context.Context, req *models.AuthRequest) (*models.Se
 			if err != nil {
 				return nil, err
 			}
+			hash, err := bcrypt.GenerateFromPassword([]byte(authUser.Password), 12)
+			if err != nil {
+				return nil, err
+			}
 
 			user := &models.Credentials{
 				ID:       uuID,
 				Email:    authUser.Email,
-				Password: authUser.Password,
+				Password: string(hash),
 				AuthHash: authHash,
 			}
 
@@ -209,13 +205,7 @@ func (a *adapter) getUserByPair(ctx context.Context, login string, password stri
 		return nil, err
 	}
 
-	var reverse string
-	for _, c := range password {
-		reverse = string(c) + reverse
-	}
-	salt, _ := base64.RawStdEncoding.DecodeString(reverse)
-
-	hash, err := generateFromPassword(password, salt)
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), 12)
 	if err != nil {
 		return nil, err
 	}
@@ -224,7 +214,7 @@ func (a *adapter) getUserByPair(ctx context.Context, login string, password stri
 	if err == database.ErrNotFound {
 		return &models.Credentials{
 			Email:    login,
-			Password: base64.RawStdEncoding.EncodeToString(hash),
+			Password: string(hash),
 		}, nil
 	}
 
@@ -232,13 +222,8 @@ func (a *adapter) getUserByPair(ctx context.Context, login string, password stri
 		return nil, err
 	}
 
-	if user.Password != base64.RawStdEncoding.EncodeToString(hash) {
+	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), hash); err != nil {
 		return nil, errors.New("password is wrong")
 	}
 	return user, nil
-}
-
-func generateFromPassword(password string, salt []byte) (hash []byte, err error) {
-	hash = argon2.IDKey([]byte(password), salt, Iterations, Memory, Parallelism, KeyLength)
-	return hash, nil
 }

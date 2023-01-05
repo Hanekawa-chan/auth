@@ -9,9 +9,9 @@ type DBConfig struct {
 	Password string `envconfig:"POSTGRES_PASSWORD" required:"yes"`
 	Name     string `envconfig:"POSTGRES_NAME" required:"yes"`
 
-	MaxOpenConns    int           `envconfig:"POSTGRES_MAX_OPEN_CONNS" envDefault:"25"`
-	MaxIdleConns    int           `envconfig:"POSTGRES_MAX_IDLE_CONNS" envDefault:"10"`
-	ConnMaxLifeTime time.Duration `envconfig:"POSTGRES_CONN_MAX_LIFE_TIME" envDefault:"5m"`
+	MaxOpenConns    int           `envconfig:"POSTGRES_MAX_OPEN_CONNS" default:"25"`
+	MaxIdleConns    int           `envconfig:"POSTGRES_MAX_IDLE_CONNS" default:"10"`
+	ConnMaxLifeTime time.Duration `envconfig:"POSTGRES_CONN_MAX_LIFE_TIME" default:"5m"`
 
 	//MigrationsSourceURL string `env:"POSTGRES_MIGRATIONS_SOURCE_URL" envDefault:"file://migrations"`
 }
