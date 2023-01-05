@@ -16,7 +16,7 @@ type adapter struct {
 	client *http.Client
 }
 
-func (a adapter) CreateUser(ctx context.Context, req *models.CreateUserRequest) (*models.User, error) {
+func (a *adapter) CreateUser(ctx context.Context, req *models.CreateUserRequest) (*models.User, error) {
 	var user *models.User
 	var err error
 

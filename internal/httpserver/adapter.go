@@ -29,7 +29,7 @@ func NewAdapter(logger *zerolog.Logger, config *app.Config, service app.Service)
 
 	r := chi.NewRouter()
 
-	a.InitMiddlewares(r)
+	a.initMiddlewares(r)
 
 	r.Group(func(r chi.Router) {
 		r.Use(a.authMiddleware)
@@ -49,7 +49,7 @@ func NewAdapter(logger *zerolog.Logger, config *app.Config, service app.Service)
 	return a
 }
 
-func (a adapter) ListenAndServe() error {
+func (a *adapter) ListenAndServe() error {
 	a.logger.Info().Msgf("Listening and serving HTTP requests on: %v", a.config.HTTPServer.Address)
 
 	if err := a.server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
@@ -60,7 +60,7 @@ func (a adapter) ListenAndServe() error {
 	return nil
 }
 
-func (a adapter) Shutdown(ctx context.Context) error {
+func (a *adapter) Shutdown(ctx context.Context) error {
 	if err := a.server.Shutdown(ctx); err != nil {
 		a.logger.Error().Err(err).Msg("Error shutting down HTTP adapter!")
 		return err
@@ -69,7 +69,7 @@ func (a adapter) Shutdown(ctx context.Context) error {
 	return nil
 }
 
-func (a adapter) HealthCheck(w http.ResponseWriter, _ *http.Request) {
+func (a *adapter) HealthCheck(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	_, err := w.Write([]byte("OK"))
 	if err != nil {
