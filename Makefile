@@ -17,3 +17,16 @@ lint:
 
 dep:
 	@go mod download
+
+models_linux:
+	cp -f kanji-go-models/*.go internal/services/models/
+
+models_win:
+	copy kanji-go-models\*.go internal\services\models\ /Y
+
+modules:
+	git submodule update --remote
+
+update_modules_win: modules models_win
+
+update_modules_linux: modules models_linux
