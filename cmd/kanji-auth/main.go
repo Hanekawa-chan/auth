@@ -35,6 +35,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// Initializations
 	logger := zerolog.New(os.Stdout).Level(level)
 
 	zl := &logger
