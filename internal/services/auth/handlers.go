@@ -65,7 +65,7 @@ func (a *adapter) Auth(ctx context.Context, req *models.AuthRequest) (*models.Se
 	var existUser *models.Credentials
 	switch req.AuthType.(type) {
 	case *models.GoogleAuth:
-		user, err := a.db.GetUserByGoogleEmail(ctx, authUser.Email)
+		user, err := a.db.GetUserByGoogleEmail(ctx, authUser.Login)
 		if err != nil {
 			return nil, err
 		}
@@ -74,7 +74,7 @@ func (a *adapter) Auth(ctx context.Context, req *models.AuthRequest) (*models.Se
 			return nil, err
 		}
 	case *models.PairAuth:
-		existUser, err = a.db.GetUserByEmail(ctx, authUser.Email)
+		existUser, err = a.db.GetUserByEmail(ctx, authUser.Login)
 		if err != nil {
 			return nil, err
 		}
@@ -97,7 +97,7 @@ func (a *adapter) Auth(ctx context.Context, req *models.AuthRequest) (*models.Se
 
 			user := &models.Credentials{
 				Id:       uuID,
-				Email:    authUser.Email,
+				Login:    authUser.Login,
 				Password: string(hash),
 				AuthHash: authHash,
 			}
@@ -191,7 +191,7 @@ func (a *adapter) getUserByGoogle(ctx context.Context, req *models.GoogleAuth) (
 	if err != nil {
 		return nil, err
 	}
-	return &models.Credentials{Email: googleUser.Email}, nil
+	return &models.Credentials{Login: googleUser.Email}, nil
 }
 
 func (a *adapter) getUserByPair(ctx context.Context, login string, password string) (*models.Credentials, error) {
@@ -213,7 +213,7 @@ func (a *adapter) getUserByPair(ctx context.Context, login string, password stri
 	user, err := a.db.GetUserByEmail(ctx, login)
 	if err == database.ErrNotFound {
 		return &models.Credentials{
-			Email:    login,
+			Login:    login,
 			Password: string(hash),
 		}, nil
 	}
