@@ -29,6 +29,7 @@ func main() {
 	}
 	fmt.Println(cfg)
 
+	// Parse log level
 	level, err := zerolog.ParseLevel(cfg.Logger.LogLevel)
 	if err != nil {
 		log.Fatal(err)
