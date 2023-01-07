@@ -69,7 +69,7 @@ func (a *adapter) Auth(ctx context.Context, req *models.AuthRequest) (*models.Se
 		if err != nil {
 			return nil, err
 		}
-		existUser, err = a.db.GetUserByID(ctx, user.ID)
+		existUser, err = a.db.GetUserByID(ctx, user.Id)
 		if err != nil {
 			return nil, err
 		}
@@ -96,7 +96,7 @@ func (a *adapter) Auth(ctx context.Context, req *models.AuthRequest) (*models.Se
 			}
 
 			user := &models.Credentials{
-				ID:       uuID,
+				Id:       uuID,
 				Email:    authUser.Email,
 				Password: string(hash),
 				AuthHash: authHash,
@@ -121,7 +121,7 @@ func (a *adapter) Auth(ctx context.Context, req *models.AuthRequest) (*models.Se
 		}, nil
 	}
 
-	token, err := a.generateJWT(existUser.ID)
+	token, err := a.generateJWT(existUser.Id)
 	if err != nil {
 		return nil, err
 	}

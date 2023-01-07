@@ -3,14 +3,14 @@ package models
 import "github.com/google/uuid"
 
 type Credentials struct {
-	ID       uuid.UUID `db:"id"`
-	Email    string
+	Id       uuid.UUID
+	Login    string
 	Password string
 	AuthHash string `db:"auth_hash"`
 }
 
 type Google struct {
-	ID       uuid.UUID `db:"id"`
+	Id       uuid.UUID
 	Email    string
-	GoogleID string `db:"google_id"`
+	GoogleId string `db:"google_id"`
 }
