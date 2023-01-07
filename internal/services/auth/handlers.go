@@ -143,8 +143,8 @@ func (a *adapter) Signup(ctx context.Context, req *models.SignupRequest) (*model
 	}
 
 	res, err := a.user.CreateUser(ctx, &models.CreateUserRequest{
-		Username: req.Username,
-		Country:  req.Country,
+		Email:   req.Email,
+		Country: req.Country,
 	})
 	if err != nil {
 		return nil, err

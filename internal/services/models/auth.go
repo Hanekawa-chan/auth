@@ -17,7 +17,7 @@ type AuthRequest struct {
 
 type SignupRequest struct {
 	AuthHash string
-	Username string
+	Email    string
 	Country  string
 }
 
