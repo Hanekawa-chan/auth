@@ -39,6 +39,17 @@ func (a *adapter) CreateUser(ctx context.Context, user *models.Credentials) erro
 	return err
 }
 
+func (a *adapter) CreateGoogle(ctx context.Context, creds *models.Google) error {
+	var err error
+	query := "insert into google (id, email, google_id) values(:id, :email, :google_id)"
+
+	_, err = a.db.NamedExecContext(ctx, query, &creds)
+	if err != nil {
+		return err
+	}
+	return err
+}
+
 func (a *adapter) GetUserByEmail(ctx context.Context, login string) (*models.Credentials, error) {
 	var err error
 	creds := models.Credentials{}
