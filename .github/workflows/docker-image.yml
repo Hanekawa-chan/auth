@@ -3,11 +3,11 @@ name: Docker Image CI
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - '*.*.*'
     branches: [ "main" ]
   pull_request:
     tags:
-      - 'v*.*.*'
+      - '*.*.*'
     branches: [ "main" ]
 
 jobs:
@@ -29,6 +29,10 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Test
+        run: |
+          echo $VERSION
+          echo ${{ env.VERSION }}
       -
         name: Build and push
         uses: docker/build-push-action@v3
