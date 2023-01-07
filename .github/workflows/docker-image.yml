@@ -13,7 +13,7 @@ jobs:
         with:
           submodules: false
       - name: Set version
-        run: echo "VERSION=`echo $(git describe --tags)`" >> $GITHUB_ENV | rm
+        run: echo "VERSION=`echo $(git describe --tags)`" >> $GITHUB_ENV
       - name: Test
         run: |
           echo $VERSION
