@@ -33,3 +33,13 @@ update_modules_linux: modules models_linux
 
 update_deps:
 	go get -u ./...
+
+#before_script:
+#    export VERSION=${CI_COMMIT_TAG#v}
+#    echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+#    export IMAGE_NAME_FULL=$CI_REGISTRY_IMAGE:$VERSION
+#script:
+#    docker build -t $IMAGE_NAME_FULL .
+#    docker push $IMAGE_NAME_FULL
+#after_script:
+#    docker logout $CI_REGISTRY
