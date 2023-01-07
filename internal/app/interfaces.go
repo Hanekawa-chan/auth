@@ -2,8 +2,8 @@ package app
 
 import (
 	"context"
+	"github.com/Hanekawa-chan/kanji-auth/internal/services/models"
 	"github.com/google/uuid"
-	"kanji-auth/internal/services/models"
 )
 
 type Service interface {
@@ -29,6 +29,7 @@ type Database interface {
 	GetUserByEmail(ctx context.Context, login string) (*models.Credentials, error)
 	GetUserByGoogleEmail(ctx context.Context, email string) (*models.Credentials, error)
 	GetUserByID(ctx context.Context, id uuid.UUID) (*models.Credentials, error)
+	CreateGoogle(ctx context.Context, creds *models.Google) error
 }
 
 type JWTGenerator interface {

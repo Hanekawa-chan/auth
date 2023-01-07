@@ -4,17 +4,18 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/Hanekawa-chan/kanji-auth/internal/database"
+	"github.com/Hanekawa-chan/kanji-auth/internal/services/models"
+	kanjiJwt "github.com/Hanekawa-chan/kanji-jwt"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"io"
-	"kanji-auth/internal/database"
-	"kanji-auth/internal/services/models"
 	"net/http"
 )
 
-func (a *adapter) GetUserInfoFromGoogleAPI(ctx context.Context, code string) (*models.GoogleAuthUser, error) {
+func (a *adapter) getUserInfoFromGoogleAPI(ctx context.Context, code string) (*models.GoogleAuthUser, error) {
 	var userInfo models.GoogleAuthUser
 
 	configGoogleAPI := &oauth2.Config{
@@ -174,6 +175,27 @@ func (a *adapter) Signup(ctx context.Context, req *models.SignupRequest) (*model
 	}, nil
 }
 
+func (a *adapter) Link(ctx context.Context, req *models.AuthRequest) error {
+	id, err := kanjiJwt.GetUserId(ctx, a.jwtGenerator.(*kanjiJwt.Generator))
+	if err != nil {
+		return err
+	}
+	switch req.AuthType.(type) {
+	case *models.GoogleAuth:
+		v := req.AuthType.(*models.GoogleAuth)
+		cred, err := a.linkGoogle(ctx, v, id)
+		if err != nil {
+			return err
+		}
+		err = a.db.CreateGoogle(ctx, cred)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+	return errors.New("invalid auth_type")
+}
+
 func (a *adapter) getAuthUser(ctx context.Context, req *models.AuthRequest) (*models.Credentials, error) {
 	switch req.AuthType.(type) {
 	case *models.GoogleAuth:
@@ -187,7 +209,7 @@ func (a *adapter) getAuthUser(ctx context.Context, req *models.AuthRequest) (*mo
 }
 
 func (a *adapter) getUserByGoogle(ctx context.Context, req *models.GoogleAuth) (*models.Credentials, error) {
-	googleUser, err := a.GetUserInfoFromGoogleAPI(ctx, req.Code)
+	googleUser, err := a.getUserInfoFromGoogleAPI(ctx, req.Code)
 	if err != nil {
 		return nil, err
 	}
@@ -226,4 +248,12 @@ func (a *adapter) getUserByPair(ctx context.Context, login string, password stri
 		return nil, errors.New("password is wrong")
 	}
 	return user, nil
+}
+
+func (a *adapter) linkGoogle(ctx context.Context, req *models.GoogleAuth, id uuid.UUID) (*models.Google, error) {
+	googleUser, err := a.getUserInfoFromGoogleAPI(ctx, req.Code)
+	if err != nil {
+		return nil, err
+	}
+	return &models.Google{Id: id, Email: googleUser.Email, GoogleId: googleUser.ID}, nil
 }

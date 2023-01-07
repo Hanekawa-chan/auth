@@ -5,11 +5,11 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/Hanekawa-chan/kanji-auth/internal/app"
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
 	"github.com/qustavo/sqlhooks/v2"
 	"github.com/rs/zerolog"
-	"kanji-auth/internal/app"
 	"time"
 )
 

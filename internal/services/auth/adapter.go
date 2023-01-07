@@ -1,8 +1,8 @@
 package auth
 
 import (
+	"github.com/Hanekawa-chan/kanji-auth/internal/app"
 	"github.com/rs/zerolog"
-	"kanji-auth/internal/app"
 )
 
 type adapter struct {

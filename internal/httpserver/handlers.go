@@ -2,7 +2,7 @@ package httpserver
 
 import (
 	"context"
-	"kanji-auth/internal/services/models"
+	"github.com/Hanekawa-chan/kanji-auth/internal/services/models"
 	"net/http"
 )
 

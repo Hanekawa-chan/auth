@@ -2,8 +2,8 @@ package database
 
 import (
 	"context"
+	"github.com/Hanekawa-chan/kanji-auth/internal/services/models"
 	"github.com/google/uuid"
-	"kanji-auth/internal/services/models"
 )
 
 func (a *adapter) UpdateId(ctx context.Context, id uuid.UUID, hash string) error {

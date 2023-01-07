@@ -30,3 +30,6 @@ modules:
 update_modules_win: modules models_win
 
 update_modules_linux: modules models_linux
+
+update_deps:
+	go get -u ./...

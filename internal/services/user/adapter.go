@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"github.com/Hanekawa-chan/kanji-auth/internal/app"
+	"github.com/Hanekawa-chan/kanji-auth/internal/services/models"
 	"github.com/rs/zerolog"
-	"kanji-auth/internal/app"
-	"kanji-auth/internal/services/models"
 	"net/http"
 )
 

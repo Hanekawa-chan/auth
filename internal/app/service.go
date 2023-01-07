@@ -2,8 +2,8 @@ package app
 
 import (
 	"context"
+	"github.com/Hanekawa-chan/kanji-auth/internal/services/models"
 	"github.com/rs/zerolog"
-	"kanji-auth/internal/services/models"
 )
 
 type service struct {

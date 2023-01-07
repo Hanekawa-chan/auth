@@ -1,9 +1,9 @@
 package app
 
 import (
+	"github.com/Hanekawa-chan/kanji-auth/internal/services/config"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/rs/zerolog/log"
-	"kanji-auth/internal/services/config"
 )
 
 type Config struct {

@@ -3,11 +3,11 @@ package httpserver
 import (
 	"context"
 	"errors"
+	"github.com/Hanekawa-chan/kanji-auth/internal/app"
 	"github.com/go-chi/chi"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/zerolog"
 	"go.uber.org/ratelimit"
-	"kanji-auth/internal/app"
 	"net/http"
 )
 
