@@ -37,3 +37,4 @@ jobs:
           push: true
           tags: ${{ env.VERSION }}
           github-token: ${{ secrets.GO_MODULES_KEY }}
+          build-args: SSH_PRIVATE_KEY=${{ secrets.GO_MODULES_KEY }}

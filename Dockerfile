@@ -1,6 +1,12 @@
 # get golang image for build as workspace
 FROM golang:1.19 AS build
 
+ARG SSH_PRIVATE_KEY
+RUN mkdir /root/.ssh/
+RUN echo "${SSH_PRIVATE_KEY}" > /root/.ssh/id_rsa
+RUN touch /root/.ssh/known_hosts
+RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
+
 # make build dir
 RUN mkdir /kanji-auth
 WORKDIR /kanji-auth
