@@ -16,7 +16,7 @@ COPY . .
 RUN make build
 
 # create image with new binary
-FROM scratch AS deploy
+FROM gcr.io/distroless/base-debian10 AS deploy
 
 COPY --from=build /kanji-auth/bin/kanji-auth /kanji-auth
 
