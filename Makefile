@@ -34,6 +34,8 @@ update_modules_linux: modules models_linux
 update_deps:
 	go get -u ./...
 
+remove_tag:
+	git tag -d "tag_name"
 #before_script:
 #    export VERSION=${CI_COMMIT_TAG#v}
 #    echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
