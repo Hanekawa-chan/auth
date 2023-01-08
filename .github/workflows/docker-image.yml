@@ -3,7 +3,7 @@ name: Docker Image CI
 on:
   push:
     tags:
-      - v*.*.*
+      - "*.*.*"
 
 jobs:
   build:
@@ -36,6 +36,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.VERSION }}
+          tags: wontforgetit/kanji:${{ env.VERSION }}
           github-token: ${{ secrets.GO_MODULES_KEY }}
           build-args: GITHUB_TOKEN=${{ secrets.GO_MODULES_KEY }}
