@@ -2,7 +2,7 @@
 FROM golang:1.19 AS build
 
 ARG GITHUB_TOKEN
-RUN git config --global url.https://${GITHUB_TOKEN}:x-oauth-basic@github.com/.insteadOf https://github.com/
+RUN git config --global url.https://hanekawa_san:${GITHUB_TOKEN}@github.com/.insteadOf https://github.com/
 ENV go env -w GOPRIVATE="github.com/Hanekawa-chan"
 # make build dir
 RUN mkdir /kanji-auth
