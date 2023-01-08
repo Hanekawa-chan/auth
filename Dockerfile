@@ -16,7 +16,7 @@ COPY . .
 RUN make build
 
 # create image with new binary
-FROM gcr.io/distroless/base-debian10 AS deploy
+FROM multiarch/ubuntu-core:arm64-bionic AS deploy
 
 COPY --from=build /kanji-auth/bin/kanji-auth /kanji-auth
 
