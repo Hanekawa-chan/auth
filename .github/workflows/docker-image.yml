@@ -34,6 +34,7 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v3
         with:
+          context: .
           push: true
           tags: ${{ env.VERSION }}
           github-token: ${{ secrets.GO_MODULES_KEY }}
