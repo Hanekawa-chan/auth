@@ -3,8 +3,7 @@ package app
 import (
 	"context"
 	"encoding/json"
-	"errors"
-	"github.com/Hanekawa-chan/kanji-auth/internal/database"
+	"github.com/Hanekawa-chan/kanji-auth/internal/services/errors"
 	"github.com/Hanekawa-chan/kanji-auth/internal/services/models"
 	kanjiJwt "github.com/Hanekawa-chan/kanji-jwt"
 	"github.com/google/uuid"
@@ -82,7 +81,7 @@ func (a *service) Auth(ctx context.Context, req *models.AuthRequest) (*models.Se
 	}
 
 	if req.AuthType.(*models.PairAuth) != nil {
-		if err == database.ErrNotFound {
+		if err == errors.ErrNotFound {
 			uuID, err := uuid.NewUUID()
 			if err != nil {
 				return nil, err
@@ -134,7 +133,7 @@ func (a *service) Auth(ctx context.Context, req *models.AuthRequest) (*models.Se
 
 func (a *service) Signup(ctx context.Context, req *models.SignupRequest) (*models.Session, error) {
 	if req.AuthHash == "" {
-		return nil, errors.New("authHash is required")
+		return nil, errors.ErrEmptyRequired
 	}
 
 	_, err := a.db.GetUserByAuthHash(ctx, req.AuthHash)
@@ -193,7 +192,7 @@ func (a *service) Link(ctx context.Context, req *models.AuthRequest) error {
 		}
 		return nil
 	}
-	return errors.New("invalid auth_type")
+	return errors.ErrType
 }
 
 func (a *service) getAuthUser(ctx context.Context, req *models.AuthRequest) (*models.Credentials, error) {
@@ -205,7 +204,7 @@ func (a *service) getAuthUser(ctx context.Context, req *models.AuthRequest) (*mo
 		v := req.AuthType.(*models.PairAuth)
 		return a.getUserByPair(ctx, v.Email, v.Password)
 	}
-	return nil, errors.New("invalid auth_type")
+	return nil, errors.ErrType
 }
 
 func (a *service) getUserByGoogle(ctx context.Context, req *models.GoogleAuth) (*models.Credentials, error) {
@@ -219,7 +218,7 @@ func (a *service) getUserByGoogle(ctx context.Context, req *models.GoogleAuth) (
 func (a *service) getUserByPair(ctx context.Context, login string, password string) (*models.Credentials, error) {
 	err := a.validateEmail(login)
 	if err != nil {
-		return nil, errors.New("email isn't valid")
+		return nil, errors.ErrValidation
 	}
 
 	err = a.validatePassword(password)
@@ -233,7 +232,7 @@ func (a *service) getUserByPair(ctx context.Context, login string, password stri
 	}
 
 	user, err := a.db.GetUserByEmail(ctx, login)
-	if err == database.ErrNotFound {
+	if err == errors.ErrNotFound {
 		return &models.Credentials{
 			Login:    login,
 			Password: string(hash),
@@ -245,7 +244,7 @@ func (a *service) getUserByPair(ctx context.Context, login string, password stri
 	}
 
 	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), hash); err != nil {
-		return nil, errors.New("password is wrong")
+		return nil, errors.ErrValidation
 	}
 	return user, nil
 }

@@ -3,7 +3,6 @@ package database
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 	"github.com/Hanekawa-chan/kanji-auth/internal/app"
 	"github.com/dlmiddlecote/sqlstats"
@@ -56,7 +55,3 @@ func NewAdapter(logger *zerolog.Logger, config *app.Config) (app.Database, error
 	}
 	return a, err
 }
-
-var (
-	ErrNotFound = errors.New("rows not found")
-)
