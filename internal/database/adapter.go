@@ -6,8 +6,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/Hanekawa-chan/kanji-auth/internal/app"
+	"github.com/dlmiddlecote/sqlstats"
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/qustavo/sqlhooks/v2"
 	"github.com/rs/zerolog"
 	"time"
@@ -40,6 +42,12 @@ func NewAdapter(logger *zerolog.Logger, config *app.Config) (app.Database, error
 	dsn := fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable",
 		config.DB.Host, config.DB.Port, config.DB.User, config.DB.Name, config.DB.Password)
 	db, err := sqlx.Connect("postgresWrapped", dsn)
+
+	// Create a new collector, the name will be used as a label on the metrics
+	collector := sqlstats.NewStatsCollector("auth", db)
+
+	// Register it with Prometheus
+	prometheus.MustRegister(collector)
 
 	a := &adapter{
 		logger: logger,

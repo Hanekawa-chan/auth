@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/Hanekawa-chan/kanji-jwt v0.0.0-20230107173121-a90e090ca057
+	github.com/dlmiddlecote/sqlstats v1.0.2
 	github.com/go-chi/chi v1.5.4
 	github.com/google/uuid v1.3.0
 	github.com/jmoiron/sqlx v1.3.5
