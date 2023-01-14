@@ -61,12 +61,6 @@ func (a *adapter) prometheusMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func (a *adapter) authMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		next.ServeHTTP(w, r)
-	})
-}
-
 func (a *adapter) initMiddlewares(r *chi.Mux) {
 	r.Use(middleware.Recoverer)
 	r.Use(a.prometheusMiddleware)

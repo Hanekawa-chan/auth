@@ -2,6 +2,7 @@ package httpserver
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/Hanekawa-chan/kanji-auth/internal/services/models"
 	"net/http"
 )
@@ -9,7 +10,14 @@ import (
 func (a *adapter) Auth(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	req := models.AuthRequest{}
-	_, err := a.service.Auth(ctx, &req)
+
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	_, err = a.service.Auth(ctx, &req)
 	if err != nil {
 		return
 	}
@@ -18,7 +26,14 @@ func (a *adapter) Auth(w http.ResponseWriter, r *http.Request) {
 func (a *adapter) Signup(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	req := models.SignupRequest{}
-	_, err := a.service.Signup(ctx, &req)
+
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	_, err = a.service.Signup(ctx, &req)
 	if err != nil {
 		return
 	}
@@ -27,7 +42,14 @@ func (a *adapter) Signup(w http.ResponseWriter, r *http.Request) {
 func (a *adapter) Link(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
 	req := models.AuthRequest{}
-	err := a.service.Link(ctx, &req)
+
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = a.service.Link(ctx, &req)
 	if err != nil {
 		return
 	}
