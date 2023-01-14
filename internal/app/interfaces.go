@@ -9,16 +9,12 @@ import (
 type Service interface {
 	Auth(ctx context.Context, req *models.AuthRequest) (*models.Session, error)
 	Signup(ctx context.Context, req *models.SignupRequest) (*models.Session, error)
+	Link(ctx context.Context, req *models.AuthRequest) error
 }
 
 type HTTPServer interface {
 	ListenAndServe() error
 	Shutdown(ctx context.Context) error
-}
-
-type Auth interface {
-	Auth(ctx context.Context, req *models.AuthRequest) (*models.Session, error)
-	Signup(ctx context.Context, req *models.SignupRequest) (*models.Session, error)
 }
 
 type Database interface {

@@ -2,11 +2,9 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/Hanekawa-chan/kanji-auth/internal/app"
 	"github.com/Hanekawa-chan/kanji-auth/internal/database"
 	"github.com/Hanekawa-chan/kanji-auth/internal/httpserver"
-	"github.com/Hanekawa-chan/kanji-auth/internal/services/auth"
 	"github.com/Hanekawa-chan/kanji-auth/internal/services/user"
 	"github.com/Hanekawa-chan/kanji-auth/internal/version"
 	kanjiJwt "github.com/Hanekawa-chan/kanji-jwt"
@@ -27,7 +25,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(cfg)
 
 	// Parse log level
 	level, err := zerolog.ParseLevel(cfg.Logger.LogLevel)
@@ -52,8 +49,7 @@ func main() {
 
 	userClient := user.NewUserClient(zl, cfg)
 
-	authService := auth.NewAuth(zl, db, jwtGenerator, userClient, cfg)
-	service := app.NewService(zl, cfg, authService)
+	service := app.NewService(zl, cfg, userClient, jwtGenerator, db)
 	httpServerAdapter := httpserver.NewAdapter(zl, cfg, service)
 
 	// Channels for errors and os signals

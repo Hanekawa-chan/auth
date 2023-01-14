@@ -35,8 +35,13 @@ func NewAdapter(logger *zerolog.Logger, config *app.Config, service app.Service)
 		r.Use(a.authMiddleware)
 	})
 
-	r.MethodFunc(http.MethodPost, "/api/v1/auth", a.Auth)
-	r.MethodFunc(http.MethodPost, "/api/v1/signup", a.Signup)
+	r.Route("/api", func(r chi.Router) {
+		r.Route("/v1", func(r chi.Router) {
+			r.MethodFunc(http.MethodPost, "/auth", a.Auth)
+			r.MethodFunc(http.MethodPost, "/signup", a.Signup)
+			r.MethodFunc(http.MethodPost, "/link", a.Link)
+		})
+	})
 
 	r.Handle("/metrics", promhttp.Handler())
 	r.MethodFunc(http.MethodGet, "/health-check", a.HealthCheck)

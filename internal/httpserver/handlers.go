@@ -23,3 +23,12 @@ func (a *adapter) Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (a *adapter) Link(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Background()
+	req := models.AuthRequest{}
+	err := a.service.Link(ctx, &req)
+	if err != nil {
+		return
+	}
+}

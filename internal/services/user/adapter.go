@@ -26,7 +26,7 @@ func (a *adapter) CreateUser(ctx context.Context, req *models.CreateUserRequest)
 	}
 
 	url := a.config.User.Address + "/api/v1/user/create"
-	resp, err := a.client.Post(url, "text/json", bytes.NewBuffer(body))
+	resp, err := a.client.Post(url, "application/json", bytes.NewBuffer(body))
 	if err != nil {
 		return nil, err
 	}

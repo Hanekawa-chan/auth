@@ -1,4 +1,4 @@
-package auth
+package app
 
 import (
 	"context"
@@ -15,7 +15,7 @@ import (
 	"net/http"
 )
 
-func (a *adapter) getUserInfoFromGoogleAPI(ctx context.Context, code string) (*models.GoogleAuthUser, error) {
+func (a *service) getUserInfoFromGoogleAPI(ctx context.Context, code string) (*models.GoogleAuthUser, error) {
 	var userInfo models.GoogleAuthUser
 
 	configGoogleAPI := &oauth2.Config{
@@ -57,7 +57,7 @@ func (a *adapter) getUserInfoFromGoogleAPI(ctx context.Context, code string) (*m
 	return &userInfo, nil
 }
 
-func (a *adapter) Auth(ctx context.Context, req *models.AuthRequest) (*models.Session, error) {
+func (a *service) Auth(ctx context.Context, req *models.AuthRequest) (*models.Session, error) {
 	authUser, err := a.getAuthUser(ctx, req)
 	if err != nil {
 		return nil, err
@@ -132,7 +132,7 @@ func (a *adapter) Auth(ctx context.Context, req *models.AuthRequest) (*models.Se
 	}, nil
 }
 
-func (a *adapter) Signup(ctx context.Context, req *models.SignupRequest) (*models.Session, error) {
+func (a *service) Signup(ctx context.Context, req *models.SignupRequest) (*models.Session, error) {
 	if req.AuthHash == "" {
 		return nil, errors.New("authHash is required")
 	}
@@ -175,7 +175,7 @@ func (a *adapter) Signup(ctx context.Context, req *models.SignupRequest) (*model
 	}, nil
 }
 
-func (a *adapter) Link(ctx context.Context, req *models.AuthRequest) error {
+func (a *service) Link(ctx context.Context, req *models.AuthRequest) error {
 	id, err := kanjiJwt.GetUserId(ctx, a.jwtGenerator.(*kanjiJwt.Generator))
 	if err != nil {
 		return err
@@ -196,7 +196,7 @@ func (a *adapter) Link(ctx context.Context, req *models.AuthRequest) error {
 	return errors.New("invalid auth_type")
 }
 
-func (a *adapter) getAuthUser(ctx context.Context, req *models.AuthRequest) (*models.Credentials, error) {
+func (a *service) getAuthUser(ctx context.Context, req *models.AuthRequest) (*models.Credentials, error) {
 	switch req.AuthType.(type) {
 	case *models.GoogleAuth:
 		v := req.AuthType.(*models.GoogleAuth)
@@ -208,7 +208,7 @@ func (a *adapter) getAuthUser(ctx context.Context, req *models.AuthRequest) (*mo
 	return nil, errors.New("invalid auth_type")
 }
 
-func (a *adapter) getUserByGoogle(ctx context.Context, req *models.GoogleAuth) (*models.Credentials, error) {
+func (a *service) getUserByGoogle(ctx context.Context, req *models.GoogleAuth) (*models.Credentials, error) {
 	googleUser, err := a.getUserInfoFromGoogleAPI(ctx, req.Code)
 	if err != nil {
 		return nil, err
@@ -216,7 +216,7 @@ func (a *adapter) getUserByGoogle(ctx context.Context, req *models.GoogleAuth) (
 	return &models.Credentials{Login: googleUser.Email}, nil
 }
 
-func (a *adapter) getUserByPair(ctx context.Context, login string, password string) (*models.Credentials, error) {
+func (a *service) getUserByPair(ctx context.Context, login string, password string) (*models.Credentials, error) {
 	err := a.validateEmail(login)
 	if err != nil {
 		return nil, errors.New("email isn't valid")
@@ -250,7 +250,7 @@ func (a *adapter) getUserByPair(ctx context.Context, login string, password stri
 	return user, nil
 }
 
-func (a *adapter) linkGoogle(ctx context.Context, req *models.GoogleAuth, id uuid.UUID) (*models.Google, error) {
+func (a *service) linkGoogle(ctx context.Context, req *models.GoogleAuth, id uuid.UUID) (*models.Google, error) {
 	googleUser, err := a.getUserInfoFromGoogleAPI(ctx, req.Code)
 	if err != nil {
 		return nil, err

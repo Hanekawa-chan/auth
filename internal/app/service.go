@@ -1,29 +1,23 @@
 package app
 
 import (
-	"context"
-	"github.com/Hanekawa-chan/kanji-auth/internal/services/models"
 	"github.com/rs/zerolog"
 )
 
 type service struct {
-	logger *zerolog.Logger
-	cfg    *Config
-	auth   Auth
+	logger       *zerolog.Logger
+	config       *Config
+	db           Database
+	jwtGenerator JWTGenerator
+	user         User
 }
 
-func NewService(logger *zerolog.Logger, cfg *Config, auth Auth) Service {
-	return service{
-		logger: logger,
-		cfg:    cfg,
-		auth:   auth,
+func NewService(logger *zerolog.Logger, cfg *Config, user User, generator JWTGenerator, database Database) Service {
+	return &service{
+		logger:       logger,
+		config:       cfg,
+		db:           database,
+		user:         user,
+		jwtGenerator: generator,
 	}
-}
-
-func (s service) Auth(ctx context.Context, req *models.AuthRequest) (*models.Session, error) {
-	return s.auth.Auth(ctx, req)
-}
-
-func (s service) Signup(ctx context.Context, req *models.SignupRequest) (*models.Session, error) {
-	return s.auth.Signup(ctx, req)
 }

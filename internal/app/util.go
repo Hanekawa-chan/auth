@@ -1,4 +1,4 @@
-package auth
+package app
 
 import (
 	"crypto/rand"
@@ -11,7 +11,7 @@ import (
 const MinSymbols = 8
 const MaxSymbols = 32
 
-func (a *adapter) validatePassword(password string) error {
+func (a *service) validatePassword(password string) error {
 	length := utf8.RuneCountInString(password)
 	if length < MinSymbols || length > MaxSymbols {
 		return errors.New("invalid password length")
@@ -19,12 +19,12 @@ func (a *adapter) validatePassword(password string) error {
 	return nil
 }
 
-func (a *adapter) validateEmail(email string) error {
+func (a *service) validateEmail(email string) error {
 	_, err := mail.ParseAddress(email)
 	return err
 }
 
-func (a *adapter) generateJWT(userID uuid.UUID) (string, error) {
+func (a *service) generateJWT(userID uuid.UUID) (string, error) {
 	claims := make(map[string]interface{})
 	claims["user_id"] = userID
 
