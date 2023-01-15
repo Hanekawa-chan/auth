@@ -5,9 +5,6 @@ type CreateUserRequest struct {
 	Country string
 }
 
-type User struct {
-	Id      string
-	Name    string
-	Email   string
-	Country string
+type CreateUserResponse struct {
+	UserId string
 }

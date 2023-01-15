@@ -33,5 +33,5 @@ type JWTGenerator interface {
 }
 
 type User interface {
-	CreateUser(ctx context.Context, req *models.CreateUserRequest) (*models.User, error)
+	CreateUser(ctx context.Context, req *models.CreateUserRequest) (string, error)
 }

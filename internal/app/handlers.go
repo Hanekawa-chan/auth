@@ -149,7 +149,7 @@ func (a *service) Signup(ctx context.Context, req *models.SignupRequest) (*model
 		return nil, err
 	}
 
-	id, err := uuid.Parse(res.Id)
+	id, err := uuid.Parse(res)
 	if err != nil {
 		return nil, err
 	}

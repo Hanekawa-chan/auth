@@ -16,28 +16,28 @@ type adapter struct {
 	client *http.Client
 }
 
-func (a *adapter) CreateUser(ctx context.Context, req *models.CreateUserRequest) (*models.User, error) {
-	var user *models.User
+func (a *adapter) CreateUser(ctx context.Context, req *models.CreateUserRequest) (string, error) {
+	var user models.CreateUserResponse
 	var err error
 
 	body, err := json.Marshal(req)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	url := a.config.User.Address + "/api/v1/user/create"
 	resp, err := a.client.Post(url, "application/json", bytes.NewBuffer(body))
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	defer resp.Body.Close()
 
 	err = json.NewDecoder(resp.Body).Decode(&user)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return user, err
+	return user.UserId, err
 }
 
 func NewUserClient(logger *zerolog.Logger, config *app.Config) app.User {

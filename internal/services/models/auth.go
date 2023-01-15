@@ -10,34 +10,3 @@ type GoogleAuthUser struct {
 	Locale        string `json:"locale"`
 	VerifiedEmail bool   `json:"verified_email"`
 }
-
-type AuthRequest struct {
-	AuthType
-}
-
-type SignupRequest struct {
-	AuthHash string
-	Email    string
-	Country  string
-}
-
-type Session struct {
-	Token    string
-	AuthHash string
-}
-
-type GoogleAuth struct {
-	Code string
-}
-
-type PairAuth struct {
-	Email    string
-	Password string
-}
-
-type AuthType interface {
-	isAuthRequestAuthType()
-}
-
-func (*PairAuth) isAuthRequestAuthType()   {}
-func (*GoogleAuth) isAuthRequestAuthType() {}
