@@ -23,6 +23,13 @@ func wrap(h ErrorHandlerFunc) http.HandlerFunc {
 	}
 }
 
+func sendResponse(w http.ResponseWriter, resp interface{}) error {
+	enc := json.NewEncoder(w)
+	enc.SetIndent("", " ")
+	err := enc.Encode(resp)
+	return err
+}
+
 type ErrorResponse struct {
 	StatusCode     int    `json:"status_code"`
 	Error          string `json:"error"`

@@ -16,10 +16,16 @@ func (a *adapter) Auth(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	_, err = a.service.Auth(ctx, &req)
+	resp, err := a.service.Auth(ctx, &req)
 	if err != nil {
 		return err
 	}
+
+	err = sendResponse(w, resp)
+	if err != nil {
+		return err
+	}
+
 	return err
 }
 
@@ -32,10 +38,16 @@ func (a *adapter) Signup(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	_, err = a.service.Signup(ctx, &req)
+	resp, err := a.service.Signup(ctx, &req)
 	if err != nil {
 		return err
 	}
+
+	err = sendResponse(w, resp)
+	if err != nil {
+		return err
+	}
+
 	return err
 }
 
