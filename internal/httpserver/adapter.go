@@ -33,9 +33,9 @@ func NewAdapter(logger *zerolog.Logger, config *app.Config, service app.Service)
 
 	r.Route("/api", func(r chi.Router) {
 		r.Route("/v1", func(r chi.Router) {
-			r.MethodFunc(http.MethodPost, "/auth", wrap(a.Auth))
-			r.MethodFunc(http.MethodPost, "/signup", wrap(a.Signup))
-			r.MethodFunc(http.MethodPost, "/link", wrap(a.Link))
+			r.MethodFunc(http.MethodPost, "/auth", wrap(a.auth))
+			r.MethodFunc(http.MethodPost, "/signup", wrap(a.signup))
+			r.MethodFunc(http.MethodPost, "/link", wrap(a.link))
 		})
 	})
 

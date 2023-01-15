@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func (a *adapter) Auth(w http.ResponseWriter, r *http.Request) error {
+func (a *adapter) auth(w http.ResponseWriter, r *http.Request) error {
 	ctx := context.Background()
 	req := models.AuthRequest{}
 
@@ -29,7 +29,7 @@ func (a *adapter) Auth(w http.ResponseWriter, r *http.Request) error {
 	return err
 }
 
-func (a *adapter) Signup(w http.ResponseWriter, r *http.Request) error {
+func (a *adapter) signup(w http.ResponseWriter, r *http.Request) error {
 	ctx := context.Background()
 	req := models.SignupRequest{}
 
@@ -51,7 +51,7 @@ func (a *adapter) Signup(w http.ResponseWriter, r *http.Request) error {
 	return err
 }
 
-func (a *adapter) Link(w http.ResponseWriter, r *http.Request) error {
+func (a *adapter) link(w http.ResponseWriter, r *http.Request) error {
 	ctx := context.Background()
 	req := models.AuthRequest{}
 
