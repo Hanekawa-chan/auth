@@ -33,14 +33,20 @@ func NewAdapter(logger *zerolog.Logger, config *app.Config, service app.Service)
 
 	r.Route("/api", func(r chi.Router) {
 		r.Route("/v1", func(r chi.Router) {
-			r.MethodFunc(http.MethodPost, "/auth", wrap(a.auth))
-			r.MethodFunc(http.MethodPost, "/signup", wrap(a.signup))
-			r.MethodFunc(http.MethodPost, "/link", wrap(a.link))
+			r.Route("/auth", func(r chi.Router) {
+				r.Post("/pair", wrap(a.pairAuth))
+				r.Post("/google", wrap(a.googleAuth))
+			})
+			r.Post("/signup", wrap(a.signup))
+			r.Route("/link", func(r chi.Router) {
+				r.Post("/pair", wrap(a.linkPair))
+				r.Post("/google", wrap(a.linkGoogle))
+			})
 		})
 	})
 
 	r.Handle("/metrics", promhttp.Handler())
-	r.MethodFunc(http.MethodGet, "/health-check", wrap(a.HealthCheck))
+	r.Get("/health-check", wrap(a.HealthCheck))
 
 	a.server = &http.Server{
 		Addr:    config.HTTPServer.Address,
