@@ -18,18 +18,27 @@ lint:
 dep:
 	@go mod download
 
-models_linux:
-	cp -f kanji-go-models/*.go internal/services/models/
+update_proto_win: update_proto proto_win generate_pb
 
-models_win:
-	copy kanji-go-models\*.go internal\services\models\ /Y
+update_proto_linux: update_proto proto_linux generate_pb
 
-modules:
-	git submodule update --remote
+update_proto:
+	git submodule foreach git pull origin master
 
-update_modules_win: modules models_win
+proto_linux:
+	rm -rf proto/protocol
+	mkdir -p ./proto/protocol
+	cp -f ./submodule/protocol/* proto/protocol # хз копирует ли оно папки
+	rm -rf proto/services/*.pb.go
 
-update_modules_linux: modules models_linux
+proto_win:
+	rm -rf proto\protocol
+	mkdir -p proto\protocol
+	robocopy submodule\protocol proto\protocol /MIR
+	rm -rf proto\services\*.pb.go
+
+generate_pb:
+	docker run --rm -v $(pwd):$(pwd) -w $(pwd) protogen -I=proto/protocol --gogofaster_out=plugins=grpc:proto/services `ls proto/protocol`
 
 update_deps:
 	go get -u ./...
