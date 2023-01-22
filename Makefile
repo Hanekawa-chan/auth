@@ -23,22 +23,26 @@ update_proto_win: update_proto proto_win generate_pb
 update_proto_linux: update_proto proto_linux generate_pb
 
 update_proto:
-	git submodule foreach git pull origin master
+	git submodule foreach git pull origin main
 
 proto_linux:
-	rm -rf proto/protocol
+	rm -rf ./proto/protocol
 	mkdir -p ./proto/protocol
-	cp -f ./submodule/protocol/* proto/protocol # хз копирует ли оно папки
-	rm -rf proto/services/*.pb.go
+	cp ./submodule/protocol/* ./proto/protocol # хз копирует ли оно папки
+	rm -rf ./proto/services/*.pb.go
+	mkdir -p proto/services
 
 proto_win:
-	rm -rf proto\protocol
-	mkdir -p proto\protocol
+	rmdir /s /q proto\protocol
+	mkdir proto\protocol
 	robocopy submodule\protocol proto\protocol /MIR
-	rm -rf proto\services\*.pb.go
+	rmdir /s /q proto\services
+	mkdir proto\services
+
+PROTO_PATH := "proto/protocol"
 
 generate_pb:
-	docker run --rm -v $(pwd):$(pwd) -w $(pwd) protogen -I=proto/protocol --gogofaster_out=plugins=grpc:proto/services `ls proto/protocol`
+	docker run --rm -v $(pwd):$(pwd) -w $(pwd) protogen -I=$(PROTO_PATH) --go_out=$(PROTO_PATH) --go-grpc_out=$(PROTO_PATH) `ls $(PROTO_PATH)`
 
 update_deps:
 	go get -u ./...
