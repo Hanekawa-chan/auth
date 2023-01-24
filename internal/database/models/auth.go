@@ -20,7 +20,7 @@ func (c *Credentials) ToDomain() (*app.Credentials, error) {
 
 	return &app.Credentials{
 		Id:       id,
-		Login:    c.Login,
+		Email:    c.Login,
 		Password: c.Password,
 		AuthHash: c.AuthHash,
 	}, nil

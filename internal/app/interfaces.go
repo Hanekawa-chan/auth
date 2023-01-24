@@ -28,10 +28,6 @@ type Database interface {
 	CreateGoogle(ctx context.Context, creds *Google) error
 }
 
-type JWTGenerator interface {
-	Generate(claims map[string]interface{}) (string, error)
-}
-
 type User interface {
 	CreateUser(ctx context.Context, req *services.CreateUserRequest) (*services.CreateUserResponse, error)
 }

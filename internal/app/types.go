@@ -15,7 +15,7 @@ type GoogleAuthUser struct {
 
 type Credentials struct {
 	Id       uuid.UUID
-	Login    string
+	Email    string
 	Password string
 	AuthHash string
 }

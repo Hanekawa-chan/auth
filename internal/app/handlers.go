@@ -64,7 +64,7 @@ func (a *service) Auth(ctx context.Context, req *services.AuthRequest) (*service
 	var existUser *Credentials
 	switch req.AuthType.(type) {
 	case *services.AuthRequest_Google:
-		user, err := a.db.GetUserByGoogleEmail(ctx, authUser.Login)
+		user, err := a.db.GetUserByGoogleEmail(ctx, authUser.Email)
 		if err != nil {
 			return nil, err
 		}
@@ -73,7 +73,7 @@ func (a *service) Auth(ctx context.Context, req *services.AuthRequest) (*service
 			return nil, err
 		}
 	case *services.AuthRequest_Pair:
-		existUser, err = a.db.GetUserByEmail(ctx, authUser.Login)
+		existUser, err = a.db.GetUserByEmail(ctx, authUser.Email)
 		if err != nil {
 			return nil, err
 		}
@@ -96,7 +96,7 @@ func (a *service) Auth(ctx context.Context, req *services.AuthRequest) (*service
 
 			user := &Credentials{
 				Id:       uuID,
-				Login:    authUser.Login,
+				Email:    authUser.Email,
 				Password: string(hash),
 				AuthHash: authHash,
 			}
@@ -166,7 +166,7 @@ func (a *service) Signup(ctx context.Context, req *services.SignUpRequest) (*ser
 }
 
 func (a *service) Link(ctx context.Context, req *services.AuthRequest) error {
-	id, err := jwt.GetUserId(ctx, a.jwtGenerator.(*jwt.Generator))
+	id, err := jwt.GetUserId(ctx, a.jwtGenerator)
 	if err != nil {
 		return err
 	}
@@ -203,7 +203,7 @@ func (a *service) getUserByGoogle(ctx context.Context, req *services.GoogleAuth)
 	if err != nil {
 		return nil, err
 	}
-	return &Credentials{Login: googleUser.Email}, nil
+	return &Credentials{Email: googleUser.Email}, nil
 }
 
 func (a *service) getUserByPair(ctx context.Context, login string, password string) (*Credentials, error) {
@@ -225,7 +225,7 @@ func (a *service) getUserByPair(ctx context.Context, login string, password stri
 	user, err := a.db.GetUserByEmail(ctx, login)
 	if err == ErrNotFound {
 		return &Credentials{
-			Login:    login,
+			Email:    login,
 			Password: string(hash),
 		}, nil
 	}
