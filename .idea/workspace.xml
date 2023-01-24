@@ -4,49 +4,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3a34217e-ac47-43ec-b638-1af2f27fc48e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/auth.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/proto/protocol" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/proto/services/auth.pb.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/proto/services/auth_grpc.pb.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/proto/services/common.pb.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/proto/services/health-check.pb.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/proto/services/health-check_grpc.pb.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/proto/services/internal_quiz.pb.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/proto/services/internal_quiz_grpc.pb.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/proto/services/internal_user.pb.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/proto/services/internal_user_grpc.pb.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/proto/services/quiz.pb.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/proto/services/user.pb.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/proto/services/user_grpc.pb.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.github/workflows/dockerhub.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/dockerhub.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitmodules" beforeDir="false" afterPath="$PROJECT_DIR$/.gitmodules" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/kanji-auth.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/kanji-auth/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/auth/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/google_test_creds.json" beforeDir="false" afterPath="$PROJECT_DIR$/google_test_creds.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/app/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/config/config.go" afterDir="false" />
+    <list default="true" id="3a34217e-ac47-43ec-b638-1af2f27fc48e" name="Changes" comment="feat: added health-check">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/app/handlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/handlers.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/app/interfaces.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/interfaces.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/app/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/app/types.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/types.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/database/adapter.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/database/adapter.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/database/handlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/database/handlers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/database/models/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/database/models/auth.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/grpcserver/adapter.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/grpcserver/adapter.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/grpcserver/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/grpcserver/config.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/grpcserver/handlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/grpcserver/handlers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/grpcserver/middlewares.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/grpcserver/middlewares.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/grpcserver/util.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/user/adapter.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/user/adapter.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/submodule/protocol" beforeDir="false" afterPath="$PROJECT_DIR$/submodule/protocol" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,6 +17,7 @@
   <component name="GOROOT" url="file://$PROJECT_DIR$/../../../../../sdks/go" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -91,6 +53,10 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="feat: grpc stuff" />
+    <MESSAGE value="feat: generator interface changed to actual struct" />
+    <MESSAGE value="feat: added health-check" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: added health-check" />
   </component>
   <component name="VgoProject">
     <environment>

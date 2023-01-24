@@ -8,4 +8,5 @@ type Config struct {
 	MaxConnectionIdle time.Duration `envconfig:"MAX_CONNECTION_IDLE"`
 	Timeout           time.Duration `envconfig:"TIMEOUT"`
 	MaxConnectionAge  time.Duration `envconfig:"MAX_CONNECTION_AGE"`
+	HealthCheckRate   time.Duration `envconfig:"HEALTH_CHECK_RATE"`
 }

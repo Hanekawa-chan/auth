@@ -50,7 +50,7 @@ func main() {
 	userClient := user.NewUserClient(zl, cfg.User)
 
 	service := app.NewService(zl, cfg, userClient, jwtGenerator, db)
-	grpcServer := grpcserver.NewAdapter(zl, cfg, service)
+	grpcServer := grpcserver.NewAdapter(zl, cfg.GRPCServer, service)
 
 	// Channels for errors and os signals
 	stop := make(chan error, 1)

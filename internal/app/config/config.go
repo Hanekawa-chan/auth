@@ -10,7 +10,7 @@ import (
 
 type Config struct {
 	Logger     *LoggerConfig
-	HTTPServer *grpcserver.Config
+	GRPCServer *grpcserver.Config
 	Auth       *AuthConfig
 	DB         *database.Config
 	User       *user.Config
@@ -71,7 +71,7 @@ func Parse() (*Config, error) {
 	cfg.Auth = &auth
 	cfg.DB = &db
 	cfg.Logger = &logger
-	cfg.HTTPServer = &grpc
+	cfg.GRPCServer = &grpc
 	cfg.User = &userConfig
 
 	return &cfg, nil
