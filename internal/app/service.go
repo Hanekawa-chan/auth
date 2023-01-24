@@ -9,8 +9,8 @@ import (
 type service struct {
 	logger       *zerolog.Logger
 	config       *config.Config
-	db           Database
 	jwtGenerator *jwt.Generator
+	db           Database
 	user         User
 }
 

@@ -3,6 +3,7 @@ package grpcserver
 import (
 	"context"
 	"github.com/kanji-team/auth/proto/services"
+	"time"
 )
 
 func (a *adapter) Auth(ctx context.Context, req *services.AuthRequest) (*services.Session, error) {
@@ -30,4 +31,20 @@ func (a *adapter) Link(ctx context.Context, req *services.AuthRequest) (*service
 	}
 
 	return nil, err
+}
+
+func (a *adapter) Check(ctx context.Context, request *services.HealthCheckRequest) (*services.HealthCheckResponse, error) {
+	return &services.HealthCheckResponse{Status: services.HealthCheckResponse_SERVING}, nil
+}
+
+func (a *adapter) Watch(request *services.HealthCheckRequest, server services.Health_WatchServer) error {
+	var err error
+	for {
+		time.Sleep(a.config.HealthCheckRate)
+		err = server.Send(&services.HealthCheckResponse{Status: services.HealthCheckResponse_SERVING})
+		if err != nil {
+			break
+		}
+	}
+	return err
 }

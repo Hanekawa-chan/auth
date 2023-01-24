@@ -41,6 +41,7 @@ func (a *adapter) ListenAndServe() error {
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to listen")
 	}
+	services.RegisterHealthServer(a.server, a)
 	log.Log().Msg("public server started")
 	if err := a.server.Serve(lis); err != nil {
 		log.Fatal().Err(err).Msg("listen server")

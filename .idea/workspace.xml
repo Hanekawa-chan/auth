@@ -4,14 +4,12 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3a34217e-ac47-43ec-b638-1af2f27fc48e" name="Changes" comment="feat: grpc stuff">
-      <change beforePath="$PROJECT_DIR$/cmd/auth/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/auth/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/app/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/config/config.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/app/handlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/handlers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/app/interfaces.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/interfaces.go" afterDir="false" />
+    <list default="true" id="3a34217e-ac47-43ec-b638-1af2f27fc48e" name="Changes" comment="feat: generator interface changed to actual struct">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/app/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/app/types.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/types.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/database/models/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/database/models/auth.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/grpcserver/adapter.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/grpcserver/adapter.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/grpcserver/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/grpcserver/config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/grpcserver/handlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/grpcserver/handlers.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,7 +56,8 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="feat: grpc stuff" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: grpc stuff" />
+    <MESSAGE value="feat: generator interface changed to actual struct" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: generator interface changed to actual struct" />
   </component>
   <component name="VgoProject">
     <environment>
