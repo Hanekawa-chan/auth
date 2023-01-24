@@ -23,7 +23,7 @@ update_proto_win: update_proto proto_win generate_pb
 update_proto_linux: update_proto proto_linux generate_pb
 
 update_proto:
-	git submodule foreach git pull origin main
+	git submodule update --remote
 
 proto_linux:
 	rm -rf ./proto/protocol
@@ -40,9 +40,10 @@ proto_win:
 	mkdir proto\services
 
 PROTO_PATH := "proto/protocol"
+PWD := $(shell pwd)
 
 generate_pb:
-	docker run --rm -v $(pwd):$(pwd) -w $(pwd) protogen -I=$(PROTO_PATH) --go_out=$(PROTO_PATH) --go-grpc_out=$(PROTO_PATH) `ls $(PROTO_PATH)`
+	docker run --rm -v $(PWD):$(PWD) -w $(PWD) protogen -I=$(PROTO_PATH) --go_out=$(PROTO_PATH) --go-grpc_out=$(PROTO_PATH) `ls $(PROTO_PATH)`
 
 update_deps:
 	go get -u ./...

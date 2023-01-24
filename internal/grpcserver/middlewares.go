@@ -1,4 +1,4 @@
-package httpserver
+package grpcserver
 
 import (
 	"github.com/go-chi/chi"

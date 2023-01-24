@@ -1,9 +1,9 @@
-package httpserver
+package grpcserver
 
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/Hanekawa-chan/kanji-auth/internal/services/errors"
+	"github.com/Hanekawa-chan/kanji-auth/internal/app"
 	"github.com/rs/zerolog/log"
 	"net/http"
 )
@@ -41,9 +41,9 @@ func JError(w http.ResponseWriter, err error) error {
 	statusCode := http.StatusInternalServerError
 
 	switch err { //noling:errorlint
-	case errors.ErrInternal:
+	case app.ErrInternal:
 		localizedError = "Действие не выполнено по неизвестной причине"
-	case errors.ErrValidation:
+	case app.ErrValidation:
 		localizedError = "Неправильный синтаксис параметров или аргументов"
 	}
 

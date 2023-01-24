@@ -3,9 +3,10 @@ package main
 import (
 	"context"
 	"github.com/Hanekawa-chan/kanji-auth/internal/app"
+	"github.com/Hanekawa-chan/kanji-auth/internal/app/config"
 	"github.com/Hanekawa-chan/kanji-auth/internal/database"
-	"github.com/Hanekawa-chan/kanji-auth/internal/httpserver"
-	"github.com/Hanekawa-chan/kanji-auth/internal/services/user"
+	"github.com/Hanekawa-chan/kanji-auth/internal/grpcserver"
+	"github.com/Hanekawa-chan/kanji-auth/internal/user"
 	"github.com/Hanekawa-chan/kanji-auth/internal/version"
 	kanjiJwt "github.com/Hanekawa-chan/kanji-jwt"
 	"github.com/rs/zerolog"
@@ -21,7 +22,7 @@ func main() {
 	log.Println("Loading Mailing - v", version.Version, "| Commit:", version.Commit)
 
 	// Parse all configs form env
-	cfg, err := app.Parse()
+	cfg, err := config.Parse()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -42,15 +43,15 @@ func main() {
 		zl.Fatal().Err(err).Msg("Database init")
 	}
 
-	jwtGenerator, err := kanjiJwt.New(cfg.JWTConfig.SecretKey)
+	jwtGenerator, err := kanjiJwt.New(cfg.Auth.JWTSecretKey)
 	if err != nil {
 		zl.Fatal().Err(err).Msg("JWT init")
 	}
 
-	userClient := user.NewUserClient(zl, cfg)
+	userClient := user.NewUserClient(zl, cfg.User)
 
 	service := app.NewService(zl, cfg, userClient, jwtGenerator, db)
-	httpServerAdapter := httpserver.NewAdapter(zl, cfg, service)
+	httpServerAdapter := grpcserver.NewAdapter(zl, cfg, service)
 
 	// Channels for errors and os signals
 	stop := make(chan error, 1)

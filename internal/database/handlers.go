@@ -2,7 +2,7 @@ package database
 
 import (
 	"context"
-	"github.com/Hanekawa-chan/kanji-auth/internal/services/models"
+	"github.com/Hanekawa-chan/kanji-auth/internal/database/models"
 	"github.com/google/uuid"
 )
 

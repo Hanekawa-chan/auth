@@ -1,8 +1,8 @@
-package config
+package user
 
 import "time"
 
-type UserConfig struct {
+type Config struct {
 	Address string        `envconfig:"USER_ADDRESS"`
 	Timeout time.Duration `envconfig:"USER_TIMEOUT"`
 }

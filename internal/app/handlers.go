@@ -3,8 +3,7 @@ package app
 import (
 	"context"
 	"encoding/json"
-	"github.com/Hanekawa-chan/kanji-auth/internal/services/errors"
-	"github.com/Hanekawa-chan/kanji-auth/internal/services/models"
+	"github.com/Hanekawa-chan/kanji-auth/proto/services"
 	kanjiJwt "github.com/Hanekawa-chan/kanji-jwt"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -14,8 +13,8 @@ import (
 	"net/http"
 )
 
-func (a *service) getUserInfoFromGoogleAPI(ctx context.Context, code string) (*models.GoogleAuthUser, error) {
-	var userInfo models.GoogleAuthUser
+func (a *service) getUserInfoFromGoogleAPI(ctx context.Context, code string) (*GoogleAuthUser, error) {
+	var userInfo GoogleAuthUser
 
 	configGoogleAPI := &oauth2.Config{
 		RedirectURL:  a.config.Auth.GoogleRedirectURL,
@@ -56,15 +55,15 @@ func (a *service) getUserInfoFromGoogleAPI(ctx context.Context, code string) (*m
 	return &userInfo, nil
 }
 
-func (a *service) Auth(ctx context.Context, req *models.AuthRequest) (*models.Session, error) {
+func (a *service) Auth(ctx context.Context, req *services.AuthRequest) (*services.Session, error) {
 	authUser, err := a.getAuthUser(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 
-	var existUser *models.Credentials
+	var existUser *Credentials
 	switch req.AuthType.(type) {
-	case *models.GoogleAuth:
+	case *services.AuthRequest_Google:
 		user, err := a.db.GetUserByGoogleEmail(ctx, authUser.Login)
 		if err != nil {
 			return nil, err
@@ -73,15 +72,15 @@ func (a *service) Auth(ctx context.Context, req *models.AuthRequest) (*models.Se
 		if err != nil {
 			return nil, err
 		}
-	case *models.PairAuth:
+	case *services.AuthRequest_Pair:
 		existUser, err = a.db.GetUserByEmail(ctx, authUser.Login)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	if req.AuthType.(*models.PairAuth) != nil {
-		if err == errors.ErrNotFound {
+	if req.AuthType.(*services.AuthRequest_Pair) != nil {
+		if err == ErrNotFound {
 			uuID, err := uuid.NewUUID()
 			if err != nil {
 				return nil, err
@@ -95,7 +94,7 @@ func (a *service) Auth(ctx context.Context, req *models.AuthRequest) (*models.Se
 				return nil, err
 			}
 
-			user := &models.Credentials{
+			user := &Credentials{
 				Id:       uuID,
 				Login:    authUser.Login,
 				Password: string(hash),
@@ -106,9 +105,7 @@ func (a *service) Auth(ctx context.Context, req *models.AuthRequest) (*models.Se
 				return nil, err
 			}
 
-			return &models.Session{
-				AuthHash: authHash,
-			}, nil
+			return &services.Session{SessionResponse: &services.Session_AuthHash{AuthHash: authHash}}, nil
 		}
 		if err != nil {
 			return nil, err
@@ -116,9 +113,7 @@ func (a *service) Auth(ctx context.Context, req *models.AuthRequest) (*models.Se
 	}
 
 	if len(existUser.AuthHash) > 0 {
-		return &models.Session{
-			AuthHash: existUser.AuthHash,
-		}, nil
+		return &services.Session{SessionResponse: &services.Session_AuthHash{AuthHash: existUser.AuthHash}}, nil
 	}
 
 	token, err := a.generateJWT(existUser.Id)
@@ -126,14 +121,12 @@ func (a *service) Auth(ctx context.Context, req *models.AuthRequest) (*models.Se
 		return nil, err
 	}
 
-	return &models.Session{
-		Token: token,
-	}, nil
+	return &services.Session{SessionResponse: &services.Session_Token{Token: token}}, nil
 }
 
-func (a *service) Signup(ctx context.Context, req *models.SignupRequest) (*models.Session, error) {
+func (a *service) Signup(ctx context.Context, req *services.SignUpRequest) (*services.Session, error) {
 	if req.AuthHash == "" {
-		return nil, errors.ErrEmptyRequired
+		return nil, ErrEmptyRequired
 	}
 
 	_, err := a.db.GetUserByAuthHash(ctx, req.AuthHash)
@@ -141,7 +134,7 @@ func (a *service) Signup(ctx context.Context, req *models.SignupRequest) (*model
 		return nil, err
 	}
 
-	res, err := a.user.CreateUser(ctx, &models.CreateUserRequest{
+	res, err := a.user.CreateUser(ctx, &services.CreateUserRequest{
 		Email:   req.Email,
 		Country: req.Country,
 	})
@@ -149,7 +142,7 @@ func (a *service) Signup(ctx context.Context, req *models.SignupRequest) (*model
 		return nil, err
 	}
 
-	id, err := uuid.Parse(res)
+	id, err := uuid.Parse(res.UserId)
 	if err != nil {
 		return nil, err
 	}
@@ -169,19 +162,17 @@ func (a *service) Signup(ctx context.Context, req *models.SignupRequest) (*model
 		return nil, err
 	}
 
-	return &models.Session{
-		Token: token,
-	}, nil
+	return &services.Session{SessionResponse: &services.Session_Token{Token: token}}, nil
 }
 
-func (a *service) Link(ctx context.Context, req *models.AuthRequest) error {
+func (a *service) Link(ctx context.Context, req *services.AuthRequest) error {
 	id, err := kanjiJwt.GetUserId(ctx, a.jwtGenerator.(*kanjiJwt.Generator))
 	if err != nil {
 		return err
 	}
 	switch req.AuthType.(type) {
-	case *models.GoogleAuth:
-		v := req.AuthType.(*models.GoogleAuth)
+	case *services.AuthRequest_Google:
+		v := req.GetGoogle()
 		cred, err := a.linkGoogle(ctx, v, id)
 		if err != nil {
 			return err
@@ -192,33 +183,33 @@ func (a *service) Link(ctx context.Context, req *models.AuthRequest) error {
 		}
 		return nil
 	}
-	return errors.ErrType
+	return ErrType
 }
 
-func (a *service) getAuthUser(ctx context.Context, req *models.AuthRequest) (*models.Credentials, error) {
+func (a *service) getAuthUser(ctx context.Context, req *services.AuthRequest) (*Credentials, error) {
 	switch req.AuthType.(type) {
-	case *models.GoogleAuth:
-		v := req.AuthType.(*models.GoogleAuth)
+	case *services.AuthRequest_Google:
+		v := req.GetGoogle()
 		return a.getUserByGoogle(ctx, v)
-	case *models.PairAuth:
-		v := req.AuthType.(*models.PairAuth)
+	case *services.AuthRequest_Pair:
+		v := req.GetPair()
 		return a.getUserByPair(ctx, v.Email, v.Password)
 	}
-	return nil, errors.ErrType
+	return nil, ErrType
 }
 
-func (a *service) getUserByGoogle(ctx context.Context, req *models.GoogleAuth) (*models.Credentials, error) {
+func (a *service) getUserByGoogle(ctx context.Context, req *services.GoogleAuth) (*Credentials, error) {
 	googleUser, err := a.getUserInfoFromGoogleAPI(ctx, req.Code)
 	if err != nil {
 		return nil, err
 	}
-	return &models.Credentials{Login: googleUser.Email}, nil
+	return &Credentials{Login: googleUser.Email}, nil
 }
 
-func (a *service) getUserByPair(ctx context.Context, login string, password string) (*models.Credentials, error) {
+func (a *service) getUserByPair(ctx context.Context, login string, password string) (*Credentials, error) {
 	err := a.validateEmail(login)
 	if err != nil {
-		return nil, errors.ErrValidation
+		return nil, ErrValidation
 	}
 
 	err = a.validatePassword(password)
@@ -232,8 +223,8 @@ func (a *service) getUserByPair(ctx context.Context, login string, password stri
 	}
 
 	user, err := a.db.GetUserByEmail(ctx, login)
-	if err == errors.ErrNotFound {
-		return &models.Credentials{
+	if err == ErrNotFound {
+		return &Credentials{
 			Login:    login,
 			Password: string(hash),
 		}, nil
@@ -244,15 +235,15 @@ func (a *service) getUserByPair(ctx context.Context, login string, password stri
 	}
 
 	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), hash); err != nil {
-		return nil, errors.ErrValidation
+		return nil, ErrValidation
 	}
 	return user, nil
 }
 
-func (a *service) linkGoogle(ctx context.Context, req *models.GoogleAuth, id uuid.UUID) (*models.Google, error) {
+func (a *service) linkGoogle(ctx context.Context, req *services.GoogleAuth, id uuid.UUID) (*Google, error) {
 	googleUser, err := a.getUserInfoFromGoogleAPI(ctx, req.Code)
 	if err != nil {
 		return nil, err
 	}
-	return &models.Google{Id: id, Email: googleUser.Email, GoogleId: googleUser.ID}, nil
+	return &Google{Id: id, Email: googleUser.Email, GoogleId: googleUser.ID}, nil
 }
