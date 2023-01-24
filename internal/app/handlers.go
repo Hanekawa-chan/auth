@@ -13,48 +13,6 @@ import (
 	"net/http"
 )
 
-func (a *service) getUserInfoFromGoogleAPI(ctx context.Context, code string) (*GoogleAuthUser, error) {
-	var userInfo GoogleAuthUser
-
-	configGoogleAPI := &oauth2.Config{
-		RedirectURL:  a.config.Auth.GoogleRedirectURL,
-		ClientID:     a.config.Auth.GoogleClientID,
-		ClientSecret: a.config.Auth.GoogleClientSecret,
-		Scopes:       a.config.Auth.GoogleScopes,
-		Endpoint:     google.Endpoint,
-	}
-
-	token, err := configGoogleAPI.Exchange(ctx, code)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, a.config.Auth.GoogleOAuthURL+token.AccessToken, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer resp.Body.Close()
-
-	content, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	err = json.Unmarshal(content, &userInfo)
-	if err != nil {
-		return nil, err
-	}
-
-	return &userInfo, nil
-}
-
 func (a *service) Auth(ctx context.Context, req *services.AuthRequest) (*services.Session, error) {
 	authUser, err := a.getAuthUser(ctx, req)
 	if err != nil {
@@ -65,7 +23,33 @@ func (a *service) Auth(ctx context.Context, req *services.AuthRequest) (*service
 	switch req.AuthType.(type) {
 	case *services.AuthRequest_Google:
 		user, err := a.db.GetUserByGoogleEmail(ctx, authUser.Email)
-		if err != nil {
+		if err == ErrNotFound {
+			uuID, err := uuid.NewUUID()
+			if err != nil {
+				return nil, err
+			}
+			authHash, err := generateAuthHash()
+			if err != nil {
+				return nil, err
+			}
+
+			user := &Credentials{
+				Id:       uuID,
+				Email:    authUser.Email,
+				AuthHash: authHash,
+			}
+
+			if err = a.db.CreateUser(ctx, user); err != nil {
+				return nil, err
+			}
+
+			err = a.Link(ctx, req)
+			if err != nil {
+				return nil, err
+			}
+
+			return &services.Session{SessionResponse: &services.Session_AuthHash{AuthHash: authHash}}, nil
+		} else if err != nil {
 			return nil, err
 		}
 		existUser, err = a.db.GetUserByID(ctx, user.Id)
@@ -74,12 +58,6 @@ func (a *service) Auth(ctx context.Context, req *services.AuthRequest) (*service
 		}
 	case *services.AuthRequest_Pair:
 		existUser, err = a.db.GetUserByEmail(ctx, authUser.Email)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	if req.AuthType.(*services.AuthRequest_Pair) != nil {
 		if err == ErrNotFound {
 			uuID, err := uuid.NewUUID()
 			if err != nil {
@@ -106,8 +84,7 @@ func (a *service) Auth(ctx context.Context, req *services.AuthRequest) (*service
 			}
 
 			return &services.Session{SessionResponse: &services.Session_AuthHash{AuthHash: authHash}}, nil
-		}
-		if err != nil {
+		} else if err != nil {
 			return nil, err
 		}
 	}
@@ -246,4 +223,46 @@ func (a *service) linkGoogle(ctx context.Context, req *services.GoogleAuth, id u
 		return nil, err
 	}
 	return &Google{Id: id, Email: googleUser.Email, GoogleId: googleUser.ID}, nil
+}
+
+func (a *service) getUserInfoFromGoogleAPI(ctx context.Context, code string) (*GoogleAuthUser, error) {
+	var userInfo GoogleAuthUser
+
+	configGoogleAPI := &oauth2.Config{
+		RedirectURL:  a.config.Auth.GoogleRedirectURL,
+		ClientID:     a.config.Auth.GoogleClientID,
+		ClientSecret: a.config.Auth.GoogleClientSecret,
+		Scopes:       a.config.Auth.GoogleScopes,
+		Endpoint:     google.Endpoint,
+	}
+
+	token, err := configGoogleAPI.Exchange(ctx, code)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, a.config.Auth.GoogleOAuthURL+token.AccessToken, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	content, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(content, &userInfo)
+	if err != nil {
+		return nil, err
+	}
+
+	return &userInfo, nil
 }

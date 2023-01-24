@@ -23,7 +23,7 @@ type Database interface {
 	RemoveAuthHash(ctx context.Context, id uuid.UUID) error
 	CreateUser(ctx context.Context, user *Credentials) error
 	GetUserByEmail(ctx context.Context, login string) (*Credentials, error)
-	GetUserByGoogleEmail(ctx context.Context, email string) (*Credentials, error)
+	GetUserByGoogleEmail(ctx context.Context, email string) (*Google, error)
 	GetUserByID(ctx context.Context, id uuid.UUID) (*Credentials, error)
 	CreateGoogle(ctx context.Context, creds *Google) error
 }
