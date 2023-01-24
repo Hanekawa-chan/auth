@@ -1,8 +1,8 @@
-package config
+package database
 
 import "time"
 
-type DBConfig struct {
+type Config struct {
 	Host     string `envconfig:"POSTGRES_HOST" required:"yes"`
 	Port     int    `envconfig:"POSTGRES_PORT" required:"yes"`
 	User     string `envconfig:"POSTGRES_USER" required:"yes"`
@@ -12,6 +12,4 @@ type DBConfig struct {
 	MaxOpenConns    int           `envconfig:"POSTGRES_MAX_OPEN_CONNS" default:"25"`
 	MaxIdleConns    int           `envconfig:"POSTGRES_MAX_IDLE_CONNS" default:"10"`
 	ConnMaxLifeTime time.Duration `envconfig:"POSTGRES_CONN_MAX_LIFE_TIME" default:"5m"`
-
-	//MigrationsSourceURL string `env:"POSTGRES_MIGRATIONS_SOURCE_URL" envDefault:"file://migrations"`
 }

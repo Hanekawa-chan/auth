@@ -2,8 +2,9 @@ package database
 
 import (
 	"context"
-	"github.com/Hanekawa-chan/kanji-auth/internal/services/models"
 	"github.com/google/uuid"
+	"github.com/kanji-team/auth/internal/app"
+	"github.com/kanji-team/auth/internal/database/models"
 )
 
 func (a *adapter) UpdateId(ctx context.Context, id uuid.UUID, hash string) error {
@@ -28,7 +29,7 @@ func (a *adapter) RemoveAuthHash(ctx context.Context, id uuid.UUID) error {
 	return err
 }
 
-func (a *adapter) CreateUser(ctx context.Context, user *models.Credentials) error {
+func (a *adapter) CreateUser(ctx context.Context, user *app.Credentials) error {
 	var err error
 	query := "insert into credentials (id, email, password, auth_hash) values(:id, :email, :password, :auth_hash)"
 
@@ -39,7 +40,7 @@ func (a *adapter) CreateUser(ctx context.Context, user *models.Credentials) erro
 	return err
 }
 
-func (a *adapter) CreateGoogle(ctx context.Context, creds *models.Google) error {
+func (a *adapter) CreateGoogle(ctx context.Context, creds *app.Google) error {
 	var err error
 	query := "insert into google (id, email, google_id) values(:id, :email, :google_id)"
 
@@ -50,50 +51,50 @@ func (a *adapter) CreateGoogle(ctx context.Context, creds *models.Google) error 
 	return err
 }
 
-func (a *adapter) GetUserByEmail(ctx context.Context, login string) (*models.Credentials, error) {
+func (a *adapter) GetUserByEmail(ctx context.Context, login string) (*app.Credentials, error) {
 	var err error
-	creds := models.Credentials{}
+	creds := &models.Credentials{}
 	query := "select * from credentials where email=$1"
 
-	err = a.db.SelectContext(ctx, &creds, query, login)
+	err = a.db.SelectContext(ctx, creds, query, login)
 	if err != nil {
 		return nil, err
 	}
-	return &creds, err
+	return creds.ToDomain()
 }
 
-func (a *adapter) GetUserByGoogleEmail(ctx context.Context, email string) (*models.Credentials, error) {
+func (a *adapter) GetUserByGoogleEmail(ctx context.Context, email string) (*app.Credentials, error) {
 	var err error
-	creds := models.Credentials{}
+	creds := &models.Credentials{}
 	query := "select * from credentials where email=$1"
 
-	err = a.db.SelectContext(ctx, &creds, query, email)
+	err = a.db.SelectContext(ctx, creds, query, email)
 	if err != nil {
 		return nil, err
 	}
-	return &creds, err
+	return creds.ToDomain()
 }
 
-func (a *adapter) GetUserByID(ctx context.Context, id uuid.UUID) (*models.Credentials, error) {
+func (a *adapter) GetUserByID(ctx context.Context, id uuid.UUID) (*app.Credentials, error) {
 	var err error
-	creds := models.Credentials{}
+	creds := &models.Credentials{}
 	query := "select * from credentials where id=$1"
 
-	err = a.db.SelectContext(ctx, &creds, query, id)
+	err = a.db.SelectContext(ctx, creds, query, id)
 	if err != nil {
 		return nil, err
 	}
-	return &creds, err
+	return creds.ToDomain()
 }
 
-func (a *adapter) GetUserByAuthHash(ctx context.Context, hash string) (*models.Credentials, error) {
+func (a *adapter) GetUserByAuthHash(ctx context.Context, hash string) (*app.Credentials, error) {
 	var err error
-	creds := models.Credentials{}
+	creds := &models.Credentials{}
 	query := "select * from credentials where auth_hash=$1"
 
-	err = a.db.SelectContext(ctx, &creds, query, hash)
+	err = a.db.SelectContext(ctx, creds, query, hash)
 	if err != nil {
 		return nil, err
 	}
-	return &creds, err
+	return creds.ToDomain()
 }

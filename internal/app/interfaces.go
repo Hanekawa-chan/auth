@@ -2,30 +2,30 @@ package app
 
 import (
 	"context"
-	"github.com/Hanekawa-chan/kanji-auth/internal/services/models"
 	"github.com/google/uuid"
+	"github.com/kanji-team/auth/proto/services"
 )
 
 type Service interface {
-	Auth(ctx context.Context, req *models.AuthRequest) (*models.Session, error)
-	Signup(ctx context.Context, req *models.SignupRequest) (*models.Session, error)
-	Link(ctx context.Context, req *models.AuthRequest) error
+	Auth(ctx context.Context, req *services.AuthRequest) (*services.Session, error)
+	Signup(ctx context.Context, req *services.SignUpRequest) (*services.Session, error)
+	Link(ctx context.Context, req *services.AuthRequest) error
 }
 
-type HTTPServer interface {
+type GRPCServer interface {
 	ListenAndServe() error
-	Shutdown(ctx context.Context) error
+	Shutdown()
 }
 
 type Database interface {
-	GetUserByAuthHash(ctx context.Context, hash string) (*models.Credentials, error)
+	GetUserByAuthHash(ctx context.Context, hash string) (*Credentials, error)
 	UpdateId(ctx context.Context, id uuid.UUID, hash string) error
 	RemoveAuthHash(ctx context.Context, id uuid.UUID) error
-	CreateUser(ctx context.Context, user *models.Credentials) error
-	GetUserByEmail(ctx context.Context, login string) (*models.Credentials, error)
-	GetUserByGoogleEmail(ctx context.Context, email string) (*models.Credentials, error)
-	GetUserByID(ctx context.Context, id uuid.UUID) (*models.Credentials, error)
-	CreateGoogle(ctx context.Context, creds *models.Google) error
+	CreateUser(ctx context.Context, user *Credentials) error
+	GetUserByEmail(ctx context.Context, login string) (*Credentials, error)
+	GetUserByGoogleEmail(ctx context.Context, email string) (*Credentials, error)
+	GetUserByID(ctx context.Context, id uuid.UUID) (*Credentials, error)
+	CreateGoogle(ctx context.Context, creds *Google) error
 }
 
 type JWTGenerator interface {
@@ -33,5 +33,5 @@ type JWTGenerator interface {
 }
 
 type User interface {
-	CreateUser(ctx context.Context, req *models.CreateUserRequest) (string, error)
+	CreateUser(ctx context.Context, req *services.CreateUserRequest) (*services.CreateUserResponse, error)
 }
