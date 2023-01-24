@@ -2,8 +2,8 @@ package app
 
 import (
 	"context"
-	"github.com/Hanekawa-chan/kanji-auth/proto/services"
 	"github.com/google/uuid"
+	"github.com/kanji-team/auth/proto/services"
 )
 
 type Service interface {
@@ -12,9 +12,9 @@ type Service interface {
 	Link(ctx context.Context, req *services.AuthRequest) error
 }
 
-type HTTPServer interface {
+type GRPCServer interface {
 	ListenAndServe() error
-	Shutdown(ctx context.Context) error
+	Shutdown()
 }
 
 type Database interface {

@@ -3,9 +3,9 @@ package app
 import (
 	"context"
 	"encoding/json"
-	"github.com/Hanekawa-chan/kanji-auth/proto/services"
-	kanjiJwt "github.com/Hanekawa-chan/kanji-jwt"
 	"github.com/google/uuid"
+	"github.com/kanji-team/auth/proto/services"
+	jwt "github.com/kanji-team/jwt"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -166,7 +166,7 @@ func (a *service) Signup(ctx context.Context, req *services.SignUpRequest) (*ser
 }
 
 func (a *service) Link(ctx context.Context, req *services.AuthRequest) error {
-	id, err := kanjiJwt.GetUserId(ctx, a.jwtGenerator.(*kanjiJwt.Generator))
+	id, err := jwt.GetUserId(ctx, a.jwtGenerator.(*jwt.Generator))
 	if err != nil {
 		return err
 	}

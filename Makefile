@@ -11,7 +11,7 @@ build:
 test:
 	@go test -v -cover -gcflags=-l --race ./...
 
-GOLANGCI_LINT_VERSION := v1.24.0
+GOLANGCI_LINT_VERSION := v1.50.0
 lint:
 	@golangci-lint run -v
 
@@ -43,7 +43,7 @@ PROTO_PATH := "proto/protocol"
 PWD := $(shell pwd)
 
 generate_pb:
-	docker run --rm -v $(PWD):$(PWD) -w $(PWD) protogen -I=$(PROTO_PATH) --go_out=$(PROTO_PATH) --go-grpc_out=$(PROTO_PATH) `ls $(PROTO_PATH)`
+	docker run --rm -v $(PWD):$(PWD) -w $(PWD) protogen -I=$(PROTO_PATH) --go_out=$(PROTO_PATH) --go-grpc_out=$(PROTO_PATH) --go-grpc_opt=require_unimplemented_servers=false `ls $(PROTO_PATH)`
 
 update_deps:
 	go get -u ./...

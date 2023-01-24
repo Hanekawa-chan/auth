@@ -1,15 +1,15 @@
-module github.com/Hanekawa-chan/kanji-auth
+module github.com/kanji-team/auth
 
 go 1.19
 
 require (
-	github.com/Hanekawa-chan/kanji-jwt v0.0.0-20230107173121-a90e090ca057
 	github.com/dlmiddlecote/sqlstats v1.0.2
 	github.com/go-chi/chi v1.5.4
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/jmoiron/sqlx v1.3.5
+	github.com/kanji-team/jwt v0.0.0-20230124185219-15a5a948cd6e
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/lib/pq v1.10.7
 	github.com/prometheus/client_golang v1.14.0

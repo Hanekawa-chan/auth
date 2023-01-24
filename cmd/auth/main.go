@@ -1,14 +1,13 @@
 package main
 
 import (
-	"context"
-	"github.com/Hanekawa-chan/kanji-auth/internal/app"
-	"github.com/Hanekawa-chan/kanji-auth/internal/app/config"
-	"github.com/Hanekawa-chan/kanji-auth/internal/database"
-	"github.com/Hanekawa-chan/kanji-auth/internal/grpcserver"
-	"github.com/Hanekawa-chan/kanji-auth/internal/user"
-	"github.com/Hanekawa-chan/kanji-auth/internal/version"
-	kanjiJwt "github.com/Hanekawa-chan/kanji-jwt"
+	"github.com/kanji-team/auth/internal/app"
+	"github.com/kanji-team/auth/internal/app/config"
+	"github.com/kanji-team/auth/internal/database"
+	"github.com/kanji-team/auth/internal/grpcserver"
+	"github.com/kanji-team/auth/internal/user"
+	"github.com/kanji-team/auth/internal/version"
+	jwt "github.com/kanji-team/jwt"
 	"github.com/rs/zerolog"
 	"log"
 	"os"
@@ -38,12 +37,12 @@ func main() {
 
 	zl := &logger
 
-	db, err := database.NewAdapter(zl, cfg)
+	db, err := database.NewAdapter(zl, cfg.DB)
 	if err != nil {
 		zl.Fatal().Err(err).Msg("Database init")
 	}
 
-	jwtGenerator, err := kanjiJwt.New(cfg.Auth.JWTSecretKey)
+	jwtGenerator, err := jwt.New(cfg.Auth.JWTSecretKey)
 	if err != nil {
 		zl.Fatal().Err(err).Msg("JWT init")
 	}
@@ -51,7 +50,7 @@ func main() {
 	userClient := user.NewUserClient(zl, cfg.User)
 
 	service := app.NewService(zl, cfg, userClient, jwtGenerator, db)
-	httpServerAdapter := grpcserver.NewAdapter(zl, cfg, service)
+	grpcServer := grpcserver.NewAdapter(zl, cfg, service)
 
 	// Channels for errors and os signals
 	stop := make(chan error, 1)
@@ -60,7 +59,7 @@ func main() {
 
 	// Receive errors form start bot func into error channel
 	go func(stop chan<- error) {
-		stop <- httpServerAdapter.ListenAndServe()
+		stop <- grpcServer.ListenAndServe()
 	}(stop)
 
 	// Blocking select
@@ -74,12 +73,7 @@ func main() {
 	// Shutdown code
 	zl.Info().Msg("Shutting down...")
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-	defer cancel()
-
-	if err := httpServerAdapter.Shutdown(ctx); err != nil {
-		zl.Error().Err(err).Msg("Error shutting down the HTTP server!")
-	}
+	grpcServer.Shutdown()
 
 	time.Sleep(time.Second * 2)
 

@@ -4,10 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/Hanekawa-chan/kanji-auth/internal/app"
-	"github.com/Hanekawa-chan/kanji-auth/internal/app/config"
 	"github.com/dlmiddlecote/sqlstats"
 	"github.com/jmoiron/sqlx"
+	"github.com/kanji-team/auth/internal/app"
 	"github.com/lib/pq"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/qustavo/sqlhooks/v2"
@@ -17,7 +16,7 @@ import (
 
 type adapter struct {
 	logger *zerolog.Logger
-	config *config.Config
+	config *Config
 	db     *sqlx.DB
 }
 
@@ -37,10 +36,10 @@ func (h *Hooks) After(ctx context.Context, query string, args ...interface{}) (c
 	return ctx, nil
 }
 
-func NewAdapter(logger *zerolog.Logger, config *config.Config) (app.Database, error) {
+func NewAdapter(logger *zerolog.Logger, config *Config) (app.Database, error) {
 	sql.Register("postgresWrapped", sqlhooks.Wrap(&pq.Driver{}, &Hooks{}))
 	dsn := fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable",
-		config.DB.Host, config.DB.Port, config.DB.User, config.DB.Name, config.DB.Password)
+		config.Host, config.Port, config.User, config.Name, config.Password)
 	db, err := sqlx.Connect("postgresWrapped", dsn)
 
 	// Create a new collector, the name will be used as a label on the metrics

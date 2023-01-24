@@ -1,9 +1,9 @@
 package config
 
 import (
-	"github.com/Hanekawa-chan/kanji-auth/internal/database"
-	"github.com/Hanekawa-chan/kanji-auth/internal/grpcserver"
-	"github.com/Hanekawa-chan/kanji-auth/internal/user"
+	"github.com/kanji-team/auth/internal/database"
+	"github.com/kanji-team/auth/internal/grpcserver"
+	"github.com/kanji-team/auth/internal/user"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/rs/zerolog/log"
 )

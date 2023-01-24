@@ -17,11 +17,11 @@ type Credentials struct {
 	Id       uuid.UUID
 	Login    string
 	Password string
-	AuthHash string `db:"auth_hash"`
+	AuthHash string
 }
 
 type Google struct {
 	Id       uuid.UUID
 	Email    string
-	GoogleId string `db:"google_id"`
+	GoogleId string
 }

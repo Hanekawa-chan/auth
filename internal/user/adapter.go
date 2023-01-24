@@ -2,7 +2,8 @@ package user
 
 import (
 	"context"
-	"github.com/Hanekawa-chan/kanji-auth/proto/services"
+	"github.com/kanji-team/auth/internal/app"
+	"github.com/kanji-team/auth/proto/services"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
@@ -10,16 +11,16 @@ import (
 )
 
 type adapter struct {
-	services.InternalUserServiceClient
+	client services.InternalUserServiceClient
 	logger *zerolog.Logger
 	config *Config
 }
 
 func (a *adapter) CreateUser(ctx context.Context, req *services.CreateUserRequest) (*services.CreateUserResponse, error) {
-
+	return a.client.CreateUser(ctx, req)
 }
 
-func NewUserClient(logger *zerolog.Logger, config *Config) domain.User {
+func NewUserClient(logger *zerolog.Logger, config *Config) app.User {
 	conn, err := grpc.Dial(config.Address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatal().Err(err).Msg("create user service client")
@@ -28,8 +29,8 @@ func NewUserClient(logger *zerolog.Logger, config *Config) domain.User {
 	client := services.NewInternalUserServiceClient(conn)
 
 	return &adapter{
-		logger:                    logger,
-		config:                    config,
-		InternalUserServiceClient: client,
+		logger: logger,
+		config: config,
+		client: client,
 	}
 }
