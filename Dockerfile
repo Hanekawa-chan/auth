@@ -19,6 +19,6 @@ RUN make build
 # create image with new binary
 FROM multiarch/ubuntu-core:arm64-bionic AS deploy
 
-COPY --from=build /${PROJECT}/bin/kanji-auth /${PROJECT}
+COPY --from=build /${PROJECT}/bin/${PROJECT} /${PROJECT}
 
 CMD ["./${PROJECT}"]
