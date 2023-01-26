@@ -229,10 +229,10 @@ func (a *service) getUserInfoFromGoogleAPI(ctx context.Context, code string) (*G
 	var userInfo GoogleAuthUser
 
 	configGoogleAPI := &oauth2.Config{
-		RedirectURL:  a.config.Auth.GoogleRedirectURL,
-		ClientID:     a.config.Auth.GoogleClientID,
-		ClientSecret: a.config.Auth.GoogleClientSecret,
-		Scopes:       a.config.Auth.GoogleScopes,
+		RedirectURL:  a.config.GoogleRedirectURL,
+		ClientID:     a.config.GoogleClientID,
+		ClientSecret: a.config.GoogleClientSecret,
+		Scopes:       a.config.GoogleScopes,
 		Endpoint:     google.Endpoint,
 	}
 
@@ -241,7 +241,7 @@ func (a *service) getUserInfoFromGoogleAPI(ctx context.Context, code string) (*G
 		return nil, err
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, a.config.Auth.GoogleOAuthURL+token.AccessToken, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, a.config.GoogleOAuthURL+token.AccessToken, nil)
 	if err != nil {
 		return nil, err
 	}

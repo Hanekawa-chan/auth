@@ -18,84 +18,84 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// UserServiceClient is the client API for UserService service.
+// InternalQuizServiceClient is the client API for InternalQuizService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type UserServiceClient interface {
+type InternalQuizServiceClient interface {
 	GetUserWords(ctx context.Context, in *UserWordsRequest, opts ...grpc.CallOption) (*UserWords, error)
 }
 
-type userServiceClient struct {
+type internalQuizServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewUserServiceClient(cc grpc.ClientConnInterface) UserServiceClient {
-	return &userServiceClient{cc}
+func NewInternalQuizServiceClient(cc grpc.ClientConnInterface) InternalQuizServiceClient {
+	return &internalQuizServiceClient{cc}
 }
 
-func (c *userServiceClient) GetUserWords(ctx context.Context, in *UserWordsRequest, opts ...grpc.CallOption) (*UserWords, error) {
+func (c *internalQuizServiceClient) GetUserWords(ctx context.Context, in *UserWordsRequest, opts ...grpc.CallOption) (*UserWords, error) {
 	out := new(UserWords)
-	err := c.cc.Invoke(ctx, "/kanji.internal.quiz.UserService/GetUserWords", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/kanji.internal.quiz.InternalQuizService/GetUserWords", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// UserServiceServer is the server API for UserService service.
-// All implementations should embed UnimplementedUserServiceServer
+// InternalQuizServiceServer is the server API for InternalQuizService service.
+// All implementations should embed UnimplementedInternalQuizServiceServer
 // for forward compatibility
-type UserServiceServer interface {
+type InternalQuizServiceServer interface {
 	GetUserWords(context.Context, *UserWordsRequest) (*UserWords, error)
 }
 
-// UnimplementedUserServiceServer should be embedded to have forward compatible implementations.
-type UnimplementedUserServiceServer struct {
+// UnimplementedInternalQuizServiceServer should be embedded to have forward compatible implementations.
+type UnimplementedInternalQuizServiceServer struct {
 }
 
-func (UnimplementedUserServiceServer) GetUserWords(context.Context, *UserWordsRequest) (*UserWords, error) {
+func (UnimplementedInternalQuizServiceServer) GetUserWords(context.Context, *UserWordsRequest) (*UserWords, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserWords not implemented")
 }
 
-// UnsafeUserServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to UserServiceServer will
+// UnsafeInternalQuizServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to InternalQuizServiceServer will
 // result in compilation errors.
-type UnsafeUserServiceServer interface {
-	mustEmbedUnimplementedUserServiceServer()
+type UnsafeInternalQuizServiceServer interface {
+	mustEmbedUnimplementedInternalQuizServiceServer()
 }
 
-func RegisterUserServiceServer(s grpc.ServiceRegistrar, srv UserServiceServer) {
-	s.RegisterService(&UserService_ServiceDesc, srv)
+func RegisterInternalQuizServiceServer(s grpc.ServiceRegistrar, srv InternalQuizServiceServer) {
+	s.RegisterService(&InternalQuizService_ServiceDesc, srv)
 }
 
-func _UserService_GetUserWords_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InternalQuizService_GetUserWords_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UserWordsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).GetUserWords(ctx, in)
+		return srv.(InternalQuizServiceServer).GetUserWords(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/kanji.internal.quiz.UserService/GetUserWords",
+		FullMethod: "/kanji.internal.quiz.InternalQuizService/GetUserWords",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).GetUserWords(ctx, req.(*UserWordsRequest))
+		return srv.(InternalQuizServiceServer).GetUserWords(ctx, req.(*UserWordsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
+// InternalQuizService_ServiceDesc is the grpc.ServiceDesc for InternalQuizService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var UserService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "kanji.internal.quiz.UserService",
-	HandlerType: (*UserServiceServer)(nil),
+var InternalQuizService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "kanji.internal.quiz.InternalQuizService",
+	HandlerType: (*InternalQuizServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GetUserWords",
-			Handler:    _UserService_GetUserWords_Handler,
+			Handler:    _InternalQuizService_GetUserWords_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

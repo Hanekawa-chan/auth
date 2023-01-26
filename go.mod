@@ -4,7 +4,6 @@ go 1.19
 
 require (
 	github.com/dlmiddlecote/sqlstats v1.0.2
-	github.com/go-chi/chi v1.5.4
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
@@ -17,7 +16,7 @@ require (
 	github.com/rs/zerolog v1.28.0
 	golang.org/x/crypto v0.5.0
 	golang.org/x/oauth2 v0.4.0
-	google.golang.org/grpc v1.51.0
+	google.golang.org/grpc v1.52.3
 	google.golang.org/protobuf v1.28.1
 )
 

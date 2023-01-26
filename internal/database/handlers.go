@@ -63,10 +63,10 @@ func (a *adapter) GetUserByEmail(ctx context.Context, login string) (*app.Creden
 	return creds.ToDomain()
 }
 
-func (a *adapter) GetUserByGoogleEmail(ctx context.Context, email string) (*app.Credentials, error) {
+func (a *adapter) GetUserByGoogleEmail(ctx context.Context, email string) (*app.Google, error) {
 	var err error
-	creds := &models.Credentials{}
-	query := "select * from credentials where email=$1"
+	creds := &models.Google{}
+	query := "select * from google where email=$1"
 
 	err = a.db.SelectContext(ctx, creds, query, email)
 	if err != nil {

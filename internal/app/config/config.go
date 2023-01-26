@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/kanji-team/auth/internal/app"
 	"github.com/kanji-team/auth/internal/database"
 	"github.com/kanji-team/auth/internal/grpcserver"
 	"github.com/kanji-team/auth/internal/user"
@@ -11,7 +12,7 @@ import (
 type Config struct {
 	Logger     *LoggerConfig
 	GRPCServer *grpcserver.Config
-	Auth       *AuthConfig
+	Auth       *app.Config
 	DB         *database.Config
 	User       *user.Config
 }
@@ -20,18 +21,9 @@ type LoggerConfig struct {
 	LogLevel string `default:"debug"`
 }
 
-type AuthConfig struct {
-	GoogleRedirectURL  string   `envconfig:"GOOGLE_REDIRECT_URL"`
-	GoogleClientID     string   `envconfig:"GOOGLE_CLIENT_ID"`
-	GoogleClientSecret string   `envconfig:"GOOGLE_CLIENT_SECRET"`
-	GoogleOAuthURL     string   `envconfig:"GOOGLE_OAUTH_URL"`
-	GoogleScopes       []string `envconfig:"GOOGLE_SCOPES"`
-	JWTSecretKey       string   `envconfig:"JWT_SECRET_KEY"`
-}
-
 func Parse() (*Config, error) {
 	cfg := Config{}
-	auth := AuthConfig{}
+	auth := app.Config{}
 	logger := LoggerConfig{}
 	db := database.Config{}
 	grpc := grpcserver.Config{}
