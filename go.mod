@@ -5,15 +5,14 @@ go 1.19
 require (
 	github.com/dlmiddlecote/sqlstats v1.0.2
 	github.com/google/uuid v1.3.0
-	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
-	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/jmoiron/sqlx v1.3.5
+	github.com/kanji-team/grpc-server v0.0.0-20230127163306-1ca804701b9e
 	github.com/kanji-team/jwt v0.0.0-20230124185219-15a5a948cd6e
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/lib/pq v1.10.7
 	github.com/prometheus/client_golang v1.14.0
 	github.com/qustavo/sqlhooks/v2 v2.1.0
-	github.com/rs/zerolog v1.28.0
+	github.com/rs/zerolog v1.29.0
 	golang.org/x/crypto v0.5.0
 	golang.org/x/oauth2 v0.4.0
 	google.golang.org/grpc v1.52.3
@@ -27,6 +26,8 @@ require (
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
+	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect

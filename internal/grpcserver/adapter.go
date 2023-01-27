@@ -1,18 +1,13 @@
 package grpcserver
 
 import (
-	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
-	grpcRecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
-	grpcValidator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
-	grpcPrometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/kanji-team/auth/internal/app"
 	"github.com/kanji-team/auth/proto/services"
+	"github.com/kanji-team/grpc-server"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/keepalive"
 	"net"
-	"time"
 )
 
 type adapter struct {
@@ -29,7 +24,7 @@ func NewAdapter(logger *zerolog.Logger, config *Config, service app.Service) app
 		service: service,
 	}
 
-	server := new(config, nil)
+	server := newServer(config, nil)
 	a.server = server
 
 	return a
@@ -55,19 +50,12 @@ func (a *adapter) Shutdown() {
 }
 
 // New returns grpc server by config with middlewares
-func new(cfg *Config, middlewares ...grpc.UnaryServerInterceptor) *grpc.Server {
-	interceptors := []grpc.UnaryServerInterceptor{
-		grpcRecovery.UnaryServerInterceptor(grpcRecovery.WithRecoveryHandlerContext(recoveryHandler)),
-		logIncomingRequestsMiddleware,
-		grpcPrometheus.UnaryServerInterceptor,
-		grpcValidator.UnaryServerInterceptor(),
+func newServer(cfg *Config, middlewares ...grpc.UnaryServerInterceptor) *grpc.Server {
+	config := &grpc_server.Config{
+		MaxConnectionIdle: cfg.MaxConnectionIdle,
+		Timeout:           cfg.Timeout,
+		MaxConnectionAge:  cfg.MaxConnectionAge,
 	}
 
-	interceptors = append(interceptors, middlewares...)
-	return grpc.NewServer(grpc.KeepaliveParams(keepalive.ServerParameters{
-		MaxConnectionIdle: cfg.MaxConnectionIdle * time.Minute,
-		Timeout:           cfg.Timeout * time.Second,
-		MaxConnectionAge:  cfg.MaxConnectionAge * time.Minute,
-		Time:              cfg.Timeout * time.Minute,
-	}), grpc.UnaryInterceptor(grpcMiddleware.ChainUnaryServer(interceptors...)))
+	return grpc_server.NewGRPCServer(config, middlewares...)
 }

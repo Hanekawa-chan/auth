@@ -67,6 +67,8 @@ github.com/jmoiron/sqlx v1.3.5/go.mod h1:nRVWtLre0KfCLJvgxzCsLVMogSvQ1zNJtpYr2Cc
 github.com/json-iterator/go v1.1.6/go.mod h1:+SdeFBvtyEkXs7REEP0seUULqWtbJapLOCVDaaPEHmU=
 github.com/json-iterator/go v1.1.8/go.mod h1:KdQUCv79m/52Kvf8AW2vK1V8akMuk1QjK/uOdHXbAo4=
 github.com/julienschmidt/httprouter v1.2.0/go.mod h1:SYymIcj16QtmaHHD7aYtjjsJG7VTCxuUUipMqKk8s4w=
+github.com/kanji-team/grpc-server v0.0.0-20230127163306-1ca804701b9e h1:Tx2waRstA4fOrzzCjkdPaIrM7BpHPi2dci4d7PSGu1I=
+github.com/kanji-team/grpc-server v0.0.0-20230127163306-1ca804701b9e/go.mod h1:8MpxJ7qWug3Jg7RqfDZrCVUPV/C2WvBk8EnyfptPETo=
 github.com/kanji-team/jwt v0.0.0-20230124185219-15a5a948cd6e h1:lke3Qt0sLc+i+dAt4Qqqkfzec9yxhN/c91MOy8WwWpY=
 github.com/kanji-team/jwt v0.0.0-20230124185219-15a5a948cd6e/go.mod h1:9LiuJj78abSH6BP5ARmVkMmyTYbTRKzkhQDYvA3gXW4=
 github.com/kelseyhightower/envconfig v1.4.0 h1:Im6hONhd3pLkfDFsbRgu68RDNkGF1r3dvMUtDTo2cv8=
@@ -125,8 +127,8 @@ github.com/prometheus/procfs v0.9.0/go.mod h1:+pB4zwohETzFnmlpe6yd2lSc+0/46IYZRB
 github.com/qustavo/sqlhooks/v2 v2.1.0 h1:54yBemHnGHp/7xgT+pxwmIlMSDNYKx5JW5dfRAiCZi0=
 github.com/qustavo/sqlhooks/v2 v2.1.0/go.mod h1:aMREyKo7fOKTwiLuWPsaHRXEmtqG4yREztO0idF83AU=
 github.com/rs/xid v1.4.0/go.mod h1:trrq9SKmegXys3aeAKXMUTdJsYXVwGY3RLcfgqegfbg=
-github.com/rs/zerolog v1.28.0 h1:MirSo27VyNi7RJYP3078AA1+Cyzd2GB66qy3aUHvsWY=
-github.com/rs/zerolog v1.28.0/go.mod h1:NILgTygv/Uej1ra5XxGf82ZFSLk58MFGAUS2o6usyD0=
+github.com/rs/zerolog v1.29.0 h1:Zes4hju04hjbvkVkOhdl2HpZa+0PmVwigmo8XoORE5w=
+github.com/rs/zerolog v1.29.0/go.mod h1:NILgTygv/Uej1ra5XxGf82ZFSLk58MFGAUS2o6usyD0=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/sirupsen/logrus v1.4.2/go.mod h1:tLMulIdttU9McNUspp0xgXVQah82FyeX6MwdIuYE2rE=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
