@@ -7,33 +7,11 @@ import (
 	"github.com/kanji-team/auth/internal/database/models"
 )
 
-func (a *adapter) UpdateId(ctx context.Context, id uuid.UUID, hash string) error {
-	var err error
-	query := "update credentials set id=$1 where auth_hash=$2"
-
-	_, err = a.db.ExecContext(ctx, query, id, hash)
-	if err != nil {
-		return err
-	}
-	return err
-}
-
-func (a *adapter) RemoveAuthHash(ctx context.Context, id uuid.UUID) error {
-	var err error
-	query := "update credentials set auth_hash=null where id=$1"
-
-	_, err = a.db.ExecContext(ctx, query, id)
-	if err != nil {
-		return err
-	}
-	return err
-}
-
 func (a *adapter) CreateUser(ctx context.Context, user *app.Credentials) error {
 	var err error
-	query := "insert into credentials (id, email, password, auth_hash) values(:id, :email, :password, :auth_hash)"
+	query := "insert into credentials (id, email, password, verified_email) values(:id, :email, :password, :verified_email)"
 
-	_, err = a.db.NamedExecContext(ctx, query, &user)
+	_, err = a.db.NamedExecContext(ctx, query, models.CredentialsToDB(user))
 	if err != nil {
 		return err
 	}
@@ -44,7 +22,7 @@ func (a *adapter) CreateGoogle(ctx context.Context, creds *app.Google) error {
 	var err error
 	query := "insert into google (id, email, google_id) values(:id, :email, :google_id)"
 
-	_, err = a.db.NamedExecContext(ctx, query, &creds)
+	_, err = a.db.NamedExecContext(ctx, query, models.GoogleToDB(creds))
 	if err != nil {
 		return err
 	}
@@ -60,7 +38,7 @@ func (a *adapter) GetUserByEmail(ctx context.Context, login string) (*app.Creden
 	if err != nil {
 		return nil, err
 	}
-	return creds.ToDomain()
+	return creds.ToDomain(), nil
 }
 
 func (a *adapter) GetUserByGoogleEmail(ctx context.Context, email string) (*app.Google, error) {
@@ -72,7 +50,7 @@ func (a *adapter) GetUserByGoogleEmail(ctx context.Context, email string) (*app.
 	if err != nil {
 		return nil, err
 	}
-	return creds.ToDomain()
+	return creds.ToDomain(), nil
 }
 
 func (a *adapter) GetUserByID(ctx context.Context, id uuid.UUID) (*app.Credentials, error) {
@@ -84,17 +62,5 @@ func (a *adapter) GetUserByID(ctx context.Context, id uuid.UUID) (*app.Credentia
 	if err != nil {
 		return nil, err
 	}
-	return creds.ToDomain()
-}
-
-func (a *adapter) GetUserByAuthHash(ctx context.Context, hash string) (*app.Credentials, error) {
-	var err error
-	creds := &models.Credentials{}
-	query := "select * from credentials where auth_hash=$1"
-
-	err = a.db.SelectContext(ctx, creds, query, hash)
-	if err != nil {
-		return nil, err
-	}
-	return creds.ToDomain()
+	return creds.ToDomain(), nil
 }

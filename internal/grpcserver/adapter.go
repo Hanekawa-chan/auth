@@ -49,7 +49,6 @@ func (a *adapter) Shutdown() {
 	a.logger.Info().Msg("Server Exited Properly")
 }
 
-// New returns grpc server by config with middlewares
 func newServer(cfg *Config, middlewares ...grpc.UnaryServerInterceptor) *grpc.Server {
 	config := &grpc_server.Config{
 		MaxConnectionIdle: cfg.MaxConnectionIdle,

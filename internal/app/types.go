@@ -14,14 +14,19 @@ type GoogleAuthUser struct {
 }
 
 type Credentials struct {
-	Id       uuid.UUID
-	Email    string
-	Password string
-	AuthHash string
+	Id            uuid.UUID
+	Email         string
+	Password      string
+	VerifiedEmail bool
 }
 
 type Google struct {
 	Id       uuid.UUID
 	Email    string
 	GoogleId string
+}
+
+type SignUpRequest struct {
+	Name  string
+	Email string
 }

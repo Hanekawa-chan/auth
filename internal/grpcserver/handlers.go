@@ -16,7 +16,7 @@ func (a *adapter) Auth(ctx context.Context, req *services.AuthRequest) (*service
 }
 
 func (a *adapter) SignUp(ctx context.Context, req *services.SignUpRequest) (*services.Session, error) {
-	session, err := a.service.Signup(ctx, req)
+	session, err := a.service.SignUp(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -33,11 +33,11 @@ func (a *adapter) Link(ctx context.Context, req *services.AuthRequest) (*service
 	return nil, err
 }
 
-func (a *adapter) Check(ctx context.Context, request *services.HealthCheckRequest) (*services.HealthCheckResponse, error) {
+func (a *adapter) Check(context.Context, *services.HealthCheckRequest) (*services.HealthCheckResponse, error) {
 	return &services.HealthCheckResponse{Status: services.HealthCheckResponse_SERVING}, nil
 }
 
-func (a *adapter) Watch(request *services.HealthCheckRequest, server services.Health_WatchServer) error {
+func (a *adapter) Watch(_ *services.HealthCheckRequest, server services.Health_WatchServer) error {
 	var err error
 	for {
 		time.Sleep(a.config.HealthCheckRate)

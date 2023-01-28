@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/kanji-team/auth/internal/app"
+	"github.com/kanji-team/auth/internal/app/api"
 	"github.com/kanji-team/auth/internal/app/config"
 	"github.com/kanji-team/auth/internal/database"
 	"github.com/kanji-team/auth/internal/grpcserver"
@@ -49,7 +50,9 @@ func main() {
 
 	userClient := user.NewUserClient(zl, cfg.User)
 
-	service := app.NewService(zl, cfg.Auth, userClient, jwtGenerator, db)
+	apiClient := api.NewAdapter(zl, cfg.Api)
+
+	service := app.NewService(zl, cfg.Auth, userClient, apiClient, jwtGenerator, db)
 	grpcServer := grpcserver.NewAdapter(zl, cfg.GRPCServer, service)
 
 	// Channels for errors and os signals

@@ -1,13 +1,15 @@
 package app
 
 import (
-	"crypto/rand"
 	"errors"
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 	"net/mail"
+	"time"
 	"unicode/utf8"
 )
 
+const Cost = 12
 const MinSymbols = 8
 const MaxSymbols = 32
 
@@ -24,9 +26,28 @@ func (a *service) validateEmail(email string) error {
 	return err
 }
 
-func (a *service) generateJWT(userID uuid.UUID) (string, error) {
+func (a *service) validatePair(login string, password string) error {
+	err := a.validateEmail(login)
+	if err != nil {
+		return ErrValidation
+	}
+
+	err = a.validatePassword(password)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *service) hashPassword(password string) ([]byte, error) {
+	return bcrypt.GenerateFromPassword([]byte(password), Cost)
+}
+
+func (a *service) generateAccessToken(userID uuid.UUID) (string, error) {
 	claims := make(map[string]interface{})
 	claims["user_id"] = userID
+	claims["exp"] = time.Now().Add(time.Hour).Unix()
 
 	token, err := a.jwtGenerator.Generate(claims)
 	if err != nil {
@@ -35,13 +56,14 @@ func (a *service) generateJWT(userID uuid.UUID) (string, error) {
 	return token, nil
 }
 
-func generateAuthHash() (string, error) {
-	b := make([]byte, 16)
-	_, err := rand.Read(b)
+func (a *service) generateRefreshToken(userID uuid.UUID) (string, error) {
+	claims := make(map[string]interface{})
+	claims["user_id"] = userID
+	claims["exp"] = time.Now().Add(168 * time.Hour).Unix()
+
+	token, err := a.jwtGenerator.Generate(claims)
 	if err != nil {
 		return "", err
 	}
-	hash := string(b)
-
-	return hash, err
+	return token, nil
 }

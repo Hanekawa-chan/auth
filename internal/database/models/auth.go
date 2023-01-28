@@ -1,46 +1,70 @@
 package models
 
 import (
+	"database/sql"
 	"github.com/google/uuid"
 	"github.com/kanji-team/auth/internal/app"
 )
 
 type Credentials struct {
-	Id       string
-	Login    string
-	Password string
-	AuthHash string `db:"auth_hash"`
+	Id            uuid.UUID      `db:"id"`
+	Email         string         `db:"email"`
+	Password      sql.NullString `db:"password"`
+	VerifiedEmail bool           `db:"verified_email"`
 }
 
-func (c *Credentials) ToDomain() (*app.Credentials, error) {
-	id, err := uuid.Parse(c.Id)
-	if err != nil {
-		return nil, err
+func (c *Credentials) ToDomain() *app.Credentials {
+	password := ""
+
+	if c.Password.Valid {
+		password = c.Password.String
 	}
 
 	return &app.Credentials{
-		Id:       id,
-		Email:    c.Login,
-		Password: c.Password,
-		AuthHash: c.AuthHash,
-	}, nil
+		Id:            c.Id,
+		Email:         c.Email,
+		Password:      password,
+		VerifiedEmail: c.VerifiedEmail,
+	}
+}
+
+func CredentialsToDB(c *app.Credentials) *Credentials {
+	password := sql.NullString{
+		String: "",
+		Valid:  false,
+	}
+
+	if c.Password != "" {
+		password.Valid = true
+		password.String = c.Password
+	}
+
+	return &Credentials{
+		Id:            c.Id,
+		Email:         c.Email,
+		Password:      password,
+		VerifiedEmail: c.VerifiedEmail,
+	}
 }
 
 type Google struct {
-	Id       string
-	Email    string
-	GoogleId string `db:"google_id"`
+	Id       uuid.UUID `db:"id"`
+	Email    string    `db:"email"`
+	GoogleId string    `db:"google_id"`
 }
 
-func (g *Google) ToDomain() (*app.Google, error) {
-	id, err := uuid.Parse(g.Id)
-	if err != nil {
-		return nil, err
-	}
-
+func (g *Google) ToDomain() *app.Google {
 	return &app.Google{
-		Id:       id,
+		Id:       g.Id,
 		Email:    g.Email,
 		GoogleId: g.GoogleId,
-	}, nil
+	}
+}
+
+func GoogleToDB(g *app.Google) *Google {
+	return &Google{
+		Id:       g.Id,
+		Email:    g.Email,
+		GoogleId: g.GoogleId,
+	}
 }

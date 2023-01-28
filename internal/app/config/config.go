@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/kanji-team/auth/internal/app"
+	"github.com/kanji-team/auth/internal/app/api"
 	"github.com/kanji-team/auth/internal/database"
 	"github.com/kanji-team/auth/internal/grpcserver"
 	"github.com/kanji-team/auth/internal/user"
@@ -11,6 +12,7 @@ import (
 
 type Config struct {
 	Logger     *LoggerConfig
+	Api        *api.Config
 	GRPCServer *grpcserver.Config
 	Auth       *app.Config
 	DB         *database.Config
@@ -23,6 +25,7 @@ type LoggerConfig struct {
 
 func Parse() (*Config, error) {
 	cfg := Config{}
+	apiConfig := api.Config{}
 	auth := app.Config{}
 	logger := LoggerConfig{}
 	db := database.Config{}
@@ -48,6 +51,12 @@ func Parse() (*Config, error) {
 		return nil, err
 	}
 
+	err = envconfig.Process(project, &apiConfig)
+	if err != nil {
+		log.Err(err).Msg("auth config error")
+		return nil, err
+	}
+
 	err = envconfig.Process(project, &grpc)
 	if err != nil {
 		log.Err(err).Msg("http config error")
@@ -60,6 +69,7 @@ func Parse() (*Config, error) {
 		return nil, err
 	}
 
+	cfg.Api = &apiConfig
 	cfg.Auth = &auth
 	cfg.DB = &db
 	cfg.Logger = &logger
