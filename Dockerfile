@@ -19,6 +19,7 @@ RUN make build
 # create image with new binary
 FROM multiarch/ubuntu-core:arm64-bionic AS deploy
 
+ENV PROJECT="auth"
 COPY --from=build /${PROJECT}/bin/${PROJECT} /${PROJECT}
 
 CMD ["./${PROJECT}"]
