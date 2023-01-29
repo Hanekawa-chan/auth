@@ -14,7 +14,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 )
 
 func main() {
@@ -77,8 +76,6 @@ func main() {
 	zl.Info().Msg("Shutting down...")
 
 	grpcServer.Shutdown()
-
-	time.Sleep(time.Second * 2)
 
 	zl.Info().Msg("Shutdown - success")
 }

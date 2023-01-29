@@ -2,6 +2,7 @@ package app
 
 import "errors"
 
+// TODO стоит добавить grpc ошибки наверное как-то
 var (
 	ErrInternal      = errors.New("internal error")
 	ErrEmptyRequired = errors.New("required value is empty")
