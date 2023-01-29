@@ -43,7 +43,7 @@ PROTO_PATH := "proto/protocol"
 PWD := $(shell pwd)
 
 generate_pb:
-	docker run --rm -v $(PWD):$(PWD) -w $(PWD) protogen -I=$(PROTO_PATH) --go_out=$(PROTO_PATH) --go-grpc_out=$(PROTO_PATH) --go-grpc_opt=require_unimplemented_servers=false `ls $(PROTO_PATH)`
+	docker run --rm -v $(PWD):$(PWD) -w $(PWD) wontforgetit/protogen:2.0 -I=$(PROTO_PATH) --go_out=$(PROTO_PATH) --go-grpc_out=$(PROTO_PATH) --go-grpc_opt=require_unimplemented_servers=false `ls $(PROTO_PATH)`
 
 update_deps:
 	go get -u ./...

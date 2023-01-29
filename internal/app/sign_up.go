@@ -31,7 +31,7 @@ func (a *service) SignUp(ctx context.Context, req *services.SignUpRequest) (*ser
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	refreshToken, err := a.generateRefreshToken(id)
+	refreshToken, err := a.generateRefreshToken()
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

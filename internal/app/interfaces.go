@@ -10,6 +10,7 @@ type Service interface {
 	Auth(ctx context.Context, req *services.AuthRequest) (*services.Session, error)
 	SignUp(ctx context.Context, req *services.SignUpRequest) (*services.Session, error)
 	Link(ctx context.Context, req *services.AuthRequest) error
+	Refresh(ctx context.Context, req *services.RefreshRequest) (*services.Session, error)
 }
 
 type GRPCServer interface {

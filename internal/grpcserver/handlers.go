@@ -33,6 +33,15 @@ func (a *adapter) Link(ctx context.Context, req *services.AuthRequest) (*service
 	return nil, err
 }
 
+func (a *adapter) Refresh(ctx context.Context, req *services.RefreshRequest) (*services.Session, error) {
+	session, err := a.service.Refresh(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return session, err
+}
+
 func (a *adapter) Check(context.Context, *services.HealthCheckRequest) (*services.HealthCheckResponse, error) {
 	return &services.HealthCheckResponse{Status: services.HealthCheckResponse_SERVING}, nil
 }

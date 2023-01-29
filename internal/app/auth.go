@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"github.com/google/uuid"
 	"github.com/kanji-team/auth/proto/services"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
@@ -37,7 +38,28 @@ func (a *service) Auth(ctx context.Context, req *services.AuthRequest) (*service
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	refreshToken, err := a.generateRefreshToken(existUser.Id)
+	refreshToken, err := a.generateRefreshToken()
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &services.Session{AccessToken: accessToken, RefreshToken: refreshToken}, nil
+}
+
+func (a *service) Refresh(ctx context.Context, req *services.RefreshRequest) (*services.Session, error) {
+	id := ctx.Value("user_id").(uuid.UUID)
+
+	err := a.parseRefreshToken(req.RefreshToken)
+	if err != nil {
+		return nil, err
+	}
+
+	accessToken, err := a.generateAccessToken(id)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	refreshToken, err := a.generateRefreshToken()
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
