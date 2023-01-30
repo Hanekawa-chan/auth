@@ -9,9 +9,10 @@ import (
 
 func (a *adapter) CreateUser(ctx context.Context, user *app.Credentials) error {
 	var err error
-	query := "insert into credentials (id, email, password, verified_email) values(:id, :email, :password, :verified_email)"
+	query := "insert into credentials (id, email, password, verified_email) values($1, $2, $3, $4)"
+	dbUser := models.FromCredentials(user)
 
-	_, err = a.db.NamedExecContext(ctx, query, models.CredentialsToDB(user))
+	_, err = a.db.ExecContext(ctx, query, dbUser.Id, dbUser.Email, dbUser.Password, dbUser.VerifiedEmail)
 	if err != nil {
 		return err
 	}
@@ -20,9 +21,10 @@ func (a *adapter) CreateUser(ctx context.Context, user *app.Credentials) error {
 
 func (a *adapter) CreateGoogle(ctx context.Context, creds *app.Google) error {
 	var err error
-	query := "insert into google (id, email, google_id) values(:id, :email, :google_id)"
+	query := "insert into google (id, email, google_id) values($1, $2, $3)"
+	dbGoogle := models.FromGoogle(creds)
 
-	_, err = a.db.NamedExecContext(ctx, query, models.GoogleToDB(creds))
+	_, err = a.db.ExecContext(ctx, query, dbGoogle.Id, dbGoogle.Email, dbGoogle.GoogleId)
 	if err != nil {
 		return err
 	}

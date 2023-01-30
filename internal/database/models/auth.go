@@ -28,7 +28,7 @@ func (c *Credentials) ToDomain() *app.Credentials {
 	}
 }
 
-func CredentialsToDB(c *app.Credentials) *Credentials {
+func FromCredentials(c *app.Credentials) *Credentials {
 	password := sql.NullString{
 		String: "",
 		Valid:  false,
@@ -61,7 +61,7 @@ func (g *Google) ToDomain() *app.Google {
 	}
 }
 
-func GoogleToDB(g *app.Google) *Google {
+func FromGoogle(g *app.Google) *Google {
 	return &Google{
 		Id:       g.Id,
 		Email:    g.Email,
