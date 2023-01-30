@@ -27,7 +27,7 @@ func NewAdapter(logger *zerolog.Logger, config *Config, service app.Service) app
 		service: service,
 	}
 
-	server := newServer(config, nil)
+	server := newServer(config)
 	a.server = server
 
 	return a
