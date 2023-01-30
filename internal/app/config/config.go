@@ -20,7 +20,7 @@ type Config struct {
 }
 
 type LoggerConfig struct {
-	LogLevel string `default:"debug"`
+	LogLevel string `envconfig:"LOG_LEVEL" default:"debug"`
 }
 
 func Parse() (*Config, error) {

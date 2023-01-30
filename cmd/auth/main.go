@@ -8,7 +8,7 @@ import (
 	"github.com/kanji-team/auth/internal/grpcserver"
 	"github.com/kanji-team/auth/internal/user"
 	"github.com/kanji-team/auth/internal/version"
-	jwt "github.com/kanji-team/jwt"
+	"github.com/kanji-team/jwt"
 	"github.com/rs/zerolog"
 	"log"
 	"os"
@@ -53,6 +53,7 @@ func main() {
 
 	service := app.NewService(zl, cfg.Auth, userClient, apiClient, jwtGenerator, db)
 	grpcServer := grpcserver.NewAdapter(zl, cfg.GRPCServer, service)
+	zl.Info().Msg("initialized everything")
 
 	// Channels for errors and os signals
 	stop := make(chan error, 1)

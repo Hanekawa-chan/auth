@@ -1,13 +1,16 @@
 package grpcserver
 
 import (
+	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/kanji-team/auth/internal/app"
 	"github.com/kanji-team/auth/proto/services"
 	"github.com/kanji-team/grpc-server"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"net"
+	"net/http"
 )
 
 type adapter struct {
@@ -32,12 +35,21 @@ func NewAdapter(logger *zerolog.Logger, config *Config, service app.Service) app
 
 func (a *adapter) ListenAndServe() error {
 	services.RegisterAuthServiceServer(a.server, a)
+	services.RegisterHealthServer(a.server, a)
+	grpc_prometheus.Register(a.server)
+	http.Handle("/metrics", promhttp.Handler())
+	go func() {
+		err := http.ListenAndServe(":6089", nil)
+		if err != nil {
+			log.Fatal().Err(err).Msg("failed to serve metrics")
+		}
+	}()
 	lis, err := net.Listen("tcp", a.config.Address)
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to listen")
 	}
-	services.RegisterHealthServer(a.server, a)
-	log.Log().Msg("public server started")
+
+	log.Log().Msg("public server started on " + a.config.Address)
 	if err := a.server.Serve(lis); err != nil {
 		log.Fatal().Err(err).Msg("listen server")
 	}

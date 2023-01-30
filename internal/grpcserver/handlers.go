@@ -16,6 +16,7 @@ func (a *adapter) Auth(ctx context.Context, req *services.AuthRequest) (*service
 }
 
 func (a *adapter) SignUp(ctx context.Context, req *services.SignUpRequest) (*services.Session, error) {
+	a.logger.Debug().Msg("got sign up grpc")
 	session, err := a.service.SignUp(ctx, req)
 	if err != nil {
 		return nil, err
