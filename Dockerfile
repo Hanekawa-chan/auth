@@ -20,6 +20,7 @@ RUN make build
 FROM multiarch/ubuntu-core:arm64-bionic AS deploy
 
 ENV PROJECT="auth"
+COPY --from=build /${PROJECT}/internal/database/migration /migrations
 COPY --from=build /${PROJECT}/bin/${PROJECT} /${PROJECT}
 
 CMD ["./auth"]
