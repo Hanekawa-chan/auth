@@ -5,9 +5,12 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/dlmiddlecote/sqlstats"
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
 	"github.com/kanji-team/auth/internal/app"
-	"github.com/lib/pq"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/qustavo/sqlhooks/v2"
 	"github.com/rs/zerolog"
@@ -37,16 +40,39 @@ func (h *Hooks) After(ctx context.Context, query string, args ...interface{}) (c
 }
 
 func NewAdapter(logger *zerolog.Logger, config *Config) (app.Database, error) {
-	sql.Register("postgresWrapped", sqlhooks.Wrap(&pq.Driver{}, &Hooks{}))
-	dsn := fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable",
+	sql.Register("postgresWrapped", sqlhooks.Wrap(&stdlib.Driver{}, &Hooks{}))
+	dsn := fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s "+
+		"sslmode=disable search_path=public default_query_exec_mode=cache_describe",
 		config.Host, config.Port, config.User, config.Name, config.Password)
 	db, err := sqlx.Connect("postgresWrapped", dsn)
+	if err != nil {
+		logger.Err(err).Msg("db connect")
+		return nil, err
+	}
 
 	// Create a new collector, the name will be used as a label on the metrics
 	collector := sqlstats.NewStatsCollector("auth", db)
 
 	// Register it with Prometheus
 	prometheus.MustRegister(collector)
+
+	instance, err := postgres.WithInstance(db.DB, &postgres.Config{})
+	if err != nil {
+		logger.Err(err).Msg("db instance")
+		return nil, err
+	}
+
+	m, err := migrate.NewWithDatabaseInstance(
+		config.MigrationsURL, config.Name, instance)
+	if err != nil {
+		logger.Err(err).Msg("db migration create")
+		return nil, err
+	}
+
+	if err := m.Up(); err != nil {
+		logger.Err(err).Msg("db migrate up")
+		return nil, err
+	}
 
 	a := &adapter{
 		logger: logger,

@@ -12,4 +12,6 @@ type Config struct {
 	MaxOpenConns    int           `envconfig:"POSTGRES_MAX_OPEN_CONNS" default:"25"`
 	MaxIdleConns    int           `envconfig:"POSTGRES_MAX_IDLE_CONNS" default:"10"`
 	ConnMaxLifeTime time.Duration `envconfig:"POSTGRES_CONN_MAX_LIFE_TIME" default:"5m"`
+
+	MigrationsURL string `envconfig:"MIGRATIONS_SOURCE_URL" default:"file://internal/database/migration"`
 }
