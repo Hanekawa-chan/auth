@@ -56,7 +56,7 @@ func NewAdapter(logger *zerolog.Logger, config *Config) (app.Database, error) {
 	// Register it with Prometheus
 	prometheus.MustRegister(collector)
 
-	instance, err := postgres.WithInstance(db.DB, &postgres.Config{})
+	instance, err := postgres.WithInstance(db.DB, &postgres.Config{DatabaseName: config.Name, SchemaName: "public"})
 	if err != nil {
 		logger.Err(err).Msg("db instance")
 		return nil, err
