@@ -1,13 +1,13 @@
 package main
 
 import (
-	"github.com/kanji-team/auth/internal/app"
-	"github.com/kanji-team/auth/internal/app/api"
-	"github.com/kanji-team/auth/internal/app/config"
-	"github.com/kanji-team/auth/internal/database"
-	"github.com/kanji-team/auth/internal/grpcserver"
-	"github.com/kanji-team/auth/internal/user"
-	"github.com/kanji-team/auth/internal/version"
+	"auth/internal/app"
+	"auth/internal/app/api"
+	"auth/internal/app/config"
+	"auth/internal/database"
+	"auth/internal/grpcserver"
+	"auth/internal/user"
+	"auth/internal/version"
 	"github.com/kanji-team/jwt"
 	"github.com/rs/zerolog"
 	"log"

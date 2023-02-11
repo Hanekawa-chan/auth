@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/kanji-team/auth/internal/app"
+	"auth/internal/app"
 	"github.com/rs/zerolog"
 )
 

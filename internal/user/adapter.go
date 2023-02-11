@@ -1,9 +1,9 @@
 package user
 
 import (
+	"auth/internal/app"
+	"auth/proto/services"
 	"context"
-	"github.com/kanji-team/auth/internal/app"
-	"github.com/kanji-team/auth/proto/services"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"

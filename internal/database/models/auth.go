@@ -1,9 +1,9 @@
 package models
 
 import (
+	"auth/internal/app"
 	"database/sql"
 	"github.com/google/uuid"
-	"github.com/kanji-team/auth/internal/app"
 )
 
 type Credentials struct {

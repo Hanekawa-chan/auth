@@ -1,9 +1,9 @@
 package api
 
 import (
+	"auth/internal/app"
 	"context"
 	"encoding/json"
-	"github.com/kanji-team/auth/internal/app"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"

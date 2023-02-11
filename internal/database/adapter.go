@@ -1,6 +1,7 @@
 package database
 
 import (
+	"auth/internal/app"
 	"context"
 	"database/sql"
 	"fmt"
@@ -10,7 +11,6 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
-	"github.com/kanji-team/auth/internal/app"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/qustavo/sqlhooks/v2"
 	"github.com/rs/zerolog"

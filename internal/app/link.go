@@ -1,9 +1,9 @@
 package app
 
 import (
+	"auth/proto/services"
 	"context"
 	"github.com/google/uuid"
-	"github.com/kanji-team/auth/proto/services"
 	jwt "github.com/kanji-team/jwt"
 )
 

@@ -1,10 +1,10 @@
 package database
 
 import (
+	"auth/internal/app"
+	"auth/internal/database/models"
 	"context"
 	"github.com/google/uuid"
-	"github.com/kanji-team/auth/internal/app"
-	"github.com/kanji-team/auth/internal/database/models"
 )
 
 func (a *adapter) CreateUser(ctx context.Context, user *app.Credentials) error {

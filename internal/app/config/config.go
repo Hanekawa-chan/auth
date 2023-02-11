@@ -1,11 +1,11 @@
 package config
 
 import (
-	"github.com/kanji-team/auth/internal/app"
-	"github.com/kanji-team/auth/internal/app/api"
-	"github.com/kanji-team/auth/internal/database"
-	"github.com/kanji-team/auth/internal/grpcserver"
-	"github.com/kanji-team/auth/internal/user"
+	"auth/internal/app"
+	"auth/internal/app/api"
+	"auth/internal/database"
+	"auth/internal/grpcserver"
+	"auth/internal/user"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/rs/zerolog/log"
 )

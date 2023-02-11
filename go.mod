@@ -1,4 +1,4 @@
-module github.com/kanji-team/auth
+module auth
 
 go 1.19
 

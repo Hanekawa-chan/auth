@@ -1,9 +1,9 @@
 package app
 
 import (
+	"auth/proto/services"
 	"context"
 	"github.com/google/uuid"
-	"github.com/kanji-team/auth/proto/services"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

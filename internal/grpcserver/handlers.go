@@ -1,8 +1,8 @@
 package grpcserver
 
 import (
+	"auth/proto/services"
 	"context"
-	"github.com/kanji-team/auth/proto/services"
 	"time"
 )
 
