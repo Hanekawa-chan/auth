@@ -50,3 +50,6 @@ update_deps:
 
 remove_tag:
 	git tag -d "tag_name"
+
+migrate:
+	migrate create -dir migrations -ext sql auth
