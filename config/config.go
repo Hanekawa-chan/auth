@@ -1,11 +1,11 @@
 package config
 
 import (
-	"auth/internal/app"
-	"auth/internal/app/api"
 	"auth/internal/database"
 	"auth/internal/grpcserver"
 	"auth/internal/user"
+	"auth/pkg/api"
+	"auth/pkg/jwtgenerator"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/rs/zerolog/log"
 )
@@ -14,7 +14,7 @@ type Config struct {
 	Logger     *LoggerConfig
 	Api        *api.Config
 	GRPCServer *grpcserver.Config
-	Auth       *app.Config
+	Auth       *jwtgenerator.Config
 	DB         *database.Config
 	User       *user.Config
 }
@@ -26,7 +26,7 @@ type LoggerConfig struct {
 func Parse() (*Config, error) {
 	cfg := Config{}
 	apiConfig := api.Config{}
-	auth := app.Config{}
+	auth := jwtgenerator.Config{}
 	logger := LoggerConfig{}
 	db := database.Config{}
 	grpc := grpcserver.Config{}

@@ -75,5 +75,5 @@ func (a *service) parseRefreshToken(token string) error {
 		return err
 	}
 
-	return err
+	return nil
 }

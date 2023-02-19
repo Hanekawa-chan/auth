@@ -3,6 +3,7 @@ package app
 import (
 	"auth/proto/services"
 	"context"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
 )
 
@@ -32,4 +33,9 @@ type User interface {
 
 type Api interface {
 	GetUserInfoFromGoogleAPI(ctx context.Context, code string) (*GoogleAuthUser, error)
+}
+
+type JWT interface {
+	Generate(claims map[string]interface{}) (string, error)
+	ParseToken(token string) (jwt.MapClaims, error)
 }

@@ -1,14 +1,14 @@
 package main
 
 import (
+	"auth/config"
 	"auth/internal/app"
-	"auth/internal/app/api"
-	"auth/internal/app/config"
 	"auth/internal/database"
 	"auth/internal/grpcserver"
 	"auth/internal/user"
 	"auth/internal/version"
-	"github.com/kanji-team/jwt"
+	"auth/pkg/api"
+	"auth/pkg/jwtgenerator"
 	"github.com/rs/zerolog"
 	"log"
 	"os"
@@ -28,6 +28,7 @@ func main() {
 
 	// Parse log level
 	level, err := zerolog.ParseLevel(cfg.Logger.LogLevel)
+	_ = err
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -42,7 +43,7 @@ func main() {
 		zl.Fatal().Err(err).Msg("Database init")
 	}
 
-	jwtGenerator, err := jwt.New(cfg.Auth.JWTSecretKey)
+	jwt, err := jwtgenerator.NewAdapter(cfg.Auth)
 	if err != nil {
 		zl.Fatal().Err(err).Msg("JWT init")
 	}
@@ -51,7 +52,7 @@ func main() {
 
 	apiClient := api.NewAdapter(zl, cfg.Api)
 
-	service := app.NewService(zl, cfg.Auth, userClient, apiClient, jwtGenerator, db)
+	service := app.NewService(zl, userClient, apiClient, jwt, db)
 	grpcServer := grpcserver.NewAdapter(zl, cfg.GRPCServer, service)
 	zl.Info().Msg("initialized everything")
 

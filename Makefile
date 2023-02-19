@@ -53,3 +53,6 @@ remove_tag:
 
 migrate:
 	migrate create -dir migrations -ext sql auth
+
+mock:
+	mockgen -source=internal/app/interfaces.go -destination=internal/app/interfaces_mock_test.go -package=app -self_package=auth/internal/app

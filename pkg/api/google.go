@@ -32,8 +32,7 @@ func (a *adapter) GetUserInfoFromGoogleAPI(ctx context.Context, code string) (*a
 		return nil, err
 	}
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := a.httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
