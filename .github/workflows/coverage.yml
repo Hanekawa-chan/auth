@@ -28,8 +28,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
+      - name: Configure git for private modules
+        env:
+          TOKEN: ${{ secrets.GO_MODULES_KEY }}
+        run: git config --global url."https://shrubberies-team:${TOKEN}@github.com".insteadOf "https://github.com"
+
       - name: Run Test
         run: |
+          go env -w GOPRIVATE="github.com/kanji-team"
           go test -v ./... -covermode=count -coverprofile=coverage.out
           go tool cover -func=coverage.out -o=coverage.out
 
