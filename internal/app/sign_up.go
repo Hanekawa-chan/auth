@@ -31,15 +31,9 @@ func (a *service) SignUp(ctx context.Context, req *services.SignUpRequest) (*ser
 		}
 	}
 
-	accessToken, err := a.generateAccessToken(id)
+	accessToken, refreshToken, err := a.generateTokens(ctx, id)
 	if err != nil {
 		a.logger.Err(err).Msg("access token")
-		return nil, status.Error(codes.Internal, err.Error())
-	}
-
-	refreshToken, err := a.generateRefreshToken()
-	if err != nil {
-		a.logger.Err(err).Msg("refresh token")
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 

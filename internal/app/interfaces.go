@@ -11,7 +11,7 @@ type Service interface {
 	Auth(ctx context.Context, req *services.AuthRequest) (*services.Session, error)
 	SignUp(ctx context.Context, req *services.SignUpRequest) (*services.Session, error)
 	Link(ctx context.Context, req *services.AuthRequest) error
-	Refresh(ctx context.Context, req *services.RefreshRequest) (*services.Session, error)
+	ValidateSession(ctx context.Context, session *services.Session) (*services.ValidSession, error)
 }
 
 type GRPCServer interface {
@@ -25,6 +25,7 @@ type Database interface {
 	GetUserByGoogleEmail(ctx context.Context, email string) (*Google, error)
 	GetUserByID(ctx context.Context, id uuid.UUID) (*Credentials, error)
 	CreateGoogle(ctx context.Context, creds *Google) error
+	UpdateIssuedAt(ctx context.Context, id uuid.UUID, issuedAt int64) error
 }
 
 type User interface {

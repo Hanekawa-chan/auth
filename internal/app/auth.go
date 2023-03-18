@@ -3,6 +3,7 @@ package app
 import (
 	"auth/proto/services"
 	"context"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
@@ -33,12 +34,7 @@ func (a *service) Auth(ctx context.Context, req *services.AuthRequest) (*service
 		}
 	}
 
-	accessToken, err := a.generateAccessToken(existUser.Id)
-	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
-	}
-
-	refreshToken, err := a.generateRefreshToken()
+	accessToken, refreshToken, err := a.generateTokens(ctx, existUser.Id)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
@@ -46,20 +42,63 @@ func (a *service) Auth(ctx context.Context, req *services.AuthRequest) (*service
 	return &services.Session{AccessToken: accessToken, RefreshToken: refreshToken}, nil
 }
 
-func (a *service) Refresh(ctx context.Context, req *services.RefreshRequest) (*services.Session, error) {
-	id := ctx.Value("user_id").(uuid.UUID)
+func (a *service) ValidateSession(ctx context.Context, session *services.Session) (*services.ValidSession, error) {
+	id, iat, err := a.parseAccessToken(session.AccessToken)
+	if err == jwt.ErrTokenExpired {
+		user, err := a.db.GetUserByID(ctx, id)
+		if err != nil {
+			return nil, err
+		}
 
-	err := a.parseRefreshToken(req.RefreshToken)
+		if user.IssuedAt > iat {
+			return nil, ErrInvalidated
+		}
+
+		session, err = a.refresh(context.WithValue(ctx, "user_id", id), session.RefreshToken)
+		if err != nil {
+			return nil, err
+		}
+
+		id, iat, err = a.parseAccessToken(session.AccessToken)
+		if err != nil {
+			return nil, err
+		}
+
+		return &services.ValidSession{
+			UserId:       id.String(),
+			AccessToken:  session.AccessToken,
+			RefreshToken: session.RefreshToken,
+		}, nil
+	} else if err != nil {
+		a.logger.Err(err).Msg("token parse")
+		return nil, err
+	}
+
+	user, err := a.db.GetUserByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	accessToken, err := a.generateAccessToken(id)
-	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
+	if user.IssuedAt > iat {
+		return nil, ErrInvalidated
 	}
 
-	refreshToken, err := a.generateRefreshToken()
+	return &services.ValidSession{
+		UserId:       id.String(),
+		AccessToken:  session.AccessToken,
+		RefreshToken: session.RefreshToken,
+	}, nil
+}
+
+func (a *service) refresh(ctx context.Context, refreshToken string) (*services.Session, error) {
+	id := ctx.Value("user_id").(uuid.UUID)
+
+	err := a.parseRefreshToken(refreshToken)
+	if err != nil {
+		return nil, err
+	}
+
+	accessToken, refreshToken, err := a.generateTokens(ctx, id)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

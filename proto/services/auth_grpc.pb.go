@@ -25,7 +25,7 @@ type AuthServiceClient interface {
 	Auth(ctx context.Context, in *AuthRequest, opts ...grpc.CallOption) (*Session, error)
 	SignUp(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*Session, error)
 	Link(ctx context.Context, in *AuthRequest, opts ...grpc.CallOption) (*Empty, error)
-	Refresh(ctx context.Context, in *RefreshRequest, opts ...grpc.CallOption) (*Session, error)
+	ValidateSession(ctx context.Context, in *Session, opts ...grpc.CallOption) (*ValidSession, error)
 }
 
 type authServiceClient struct {
@@ -63,9 +63,9 @@ func (c *authServiceClient) Link(ctx context.Context, in *AuthRequest, opts ...g
 	return out, nil
 }
 
-func (c *authServiceClient) Refresh(ctx context.Context, in *RefreshRequest, opts ...grpc.CallOption) (*Session, error) {
-	out := new(Session)
-	err := c.cc.Invoke(ctx, "/kanji.auth.AuthService/Refresh", in, out, opts...)
+func (c *authServiceClient) ValidateSession(ctx context.Context, in *Session, opts ...grpc.CallOption) (*ValidSession, error) {
+	out := new(ValidSession)
+	err := c.cc.Invoke(ctx, "/kanji.auth.AuthService/ValidateSession", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +79,7 @@ type AuthServiceServer interface {
 	Auth(context.Context, *AuthRequest) (*Session, error)
 	SignUp(context.Context, *SignUpRequest) (*Session, error)
 	Link(context.Context, *AuthRequest) (*Empty, error)
-	Refresh(context.Context, *RefreshRequest) (*Session, error)
+	ValidateSession(context.Context, *Session) (*ValidSession, error)
 }
 
 // UnimplementedAuthServiceServer should be embedded to have forward compatible implementations.
@@ -95,8 +95,8 @@ func (UnimplementedAuthServiceServer) SignUp(context.Context, *SignUpRequest) (*
 func (UnimplementedAuthServiceServer) Link(context.Context, *AuthRequest) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Link not implemented")
 }
-func (UnimplementedAuthServiceServer) Refresh(context.Context, *RefreshRequest) (*Session, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Refresh not implemented")
+func (UnimplementedAuthServiceServer) ValidateSession(context.Context, *Session) (*ValidSession, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidateSession not implemented")
 }
 
 // UnsafeAuthServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -164,20 +164,20 @@ func _AuthService_Link_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthService_Refresh_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RefreshRequest)
+func _AuthService_ValidateSession_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Session)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServiceServer).Refresh(ctx, in)
+		return srv.(AuthServiceServer).ValidateSession(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/kanji.auth.AuthService/Refresh",
+		FullMethod: "/kanji.auth.AuthService/ValidateSession",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).Refresh(ctx, req.(*RefreshRequest))
+		return srv.(AuthServiceServer).ValidateSession(ctx, req.(*Session))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -202,8 +202,8 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuthService_Link_Handler,
 		},
 		{
-			MethodName: "Refresh",
-			Handler:    _AuthService_Refresh_Handler,
+			MethodName: "ValidateSession",
+			Handler:    _AuthService_ValidateSession_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

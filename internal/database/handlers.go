@@ -66,3 +66,14 @@ func (a *adapter) GetUserByID(ctx context.Context, id uuid.UUID) (*app.Credentia
 	}
 	return creds.ToDomain(), nil
 }
+
+func (a *adapter) UpdateIssuedAt(ctx context.Context, id uuid.UUID, issuedAt int64) error {
+	var err error
+	query := "update credentials set iat = $2 where id=$1"
+
+	_, err = a.db.ExecContext(ctx, query, id, issuedAt)
+	if err != nil {
+		return err
+	}
+	return nil
+}
