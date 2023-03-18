@@ -11,6 +11,7 @@ type Credentials struct {
 	Email         string         `db:"email"`
 	Password      sql.NullString `db:"password"`
 	VerifiedEmail bool           `db:"verified_email"`
+	IssuedAt      int64          `db:"iat"`
 }
 
 func (c *Credentials) ToDomain() *app.Credentials {

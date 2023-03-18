@@ -1,7 +1,9 @@
 package app
 
 import (
+	"context"
 	"errors"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"net/mail"
@@ -10,10 +12,10 @@ import (
 )
 
 const Cost = 12
-const MinSymbols = 8
+const MinSymbols = 10
 const MaxSymbols = 32
-const AccessExp = time.Hour
-const RefreshExp = 168 * time.Hour
+const AccessExp = 30 * time.Minute
+const RefreshExp = 2 * 31 * 24 * time.Hour
 
 func (a *service) validatePassword(password string) error {
 	length := utf8.RuneCountInString(password)
@@ -46,10 +48,30 @@ func (a *service) hashPassword(password string) ([]byte, error) {
 	return bcrypt.GenerateFromPassword([]byte(password), Cost)
 }
 
-func (a *service) generateAccessToken(userID uuid.UUID) (string, error) {
+func (a *service) generateTokens(ctx context.Context, userID uuid.UUID) (string, string, error) {
+	issuedAt := time.Now()
+
+	accessToken, err := a.generateAccessToken(userID, issuedAt)
+	if err != nil {
+		return "", "", err
+	}
+	refreshToken, err := a.generateRefreshToken(issuedAt)
+	if err != nil {
+		return "", "", err
+	}
+
+	err = a.db.UpdateIssuedAt(ctx, userID, issuedAt.Unix())
+	if err != nil {
+		return "", "", err
+	}
+	return accessToken, refreshToken, nil
+}
+
+func (a *service) generateAccessToken(userID uuid.UUID, issuedAt time.Time) (string, error) {
 	claims := make(map[string]interface{})
 	claims["user_id"] = userID
-	claims["exp"] = time.Now().Add(AccessExp).Unix()
+	claims["iat"] = issuedAt.Unix()
+	claims["exp"] = issuedAt.Add(AccessExp).Unix()
 
 	token, err := a.jwtGenerator.Generate(claims)
 	if err != nil {
@@ -58,15 +80,48 @@ func (a *service) generateAccessToken(userID uuid.UUID) (string, error) {
 	return token, nil
 }
 
-func (a *service) generateRefreshToken() (string, error) {
+func (a *service) generateRefreshToken(issuedAt time.Time) (string, error) {
 	claims := make(map[string]interface{})
-	claims["exp"] = time.Now().Add(RefreshExp).Unix()
+	claims["iat"] = issuedAt.Unix()
+	claims["exp"] = issuedAt.Add(RefreshExp).Unix()
 
 	token, err := a.jwtGenerator.Generate(claims)
 	if err != nil {
 		return "", err
 	}
 	return token, nil
+}
+
+func (a *service) parseAccessToken(token string) (uuid.UUID, int64, error) {
+	claims, err := a.jwtGenerator.ParseToken(token)
+	if err != nil {
+		if err == jwt.ErrTokenExpired {
+			tokenStruct, _, err := (&jwt.Parser{}).ParseUnverified(token, jwt.MapClaims{})
+			if err != nil {
+				return uuid.UUID{}, 0, err
+			}
+
+			claims = tokenStruct.Claims.(jwt.MapClaims)
+		} else {
+			return uuid.UUID{}, 0, err
+		}
+	}
+
+	userID := uuid.UUID{}
+	if id, ok := claims["user_id"].(uuid.UUID); !ok {
+		return uuid.UUID{}, 0, ErrType
+	} else {
+		userID = id
+	}
+
+	var issuedAt int64 = 0
+	if iat, ok := claims["iat"].(int64); !ok {
+		return uuid.UUID{}, 0, ErrType
+	} else {
+		issuedAt = iat
+	}
+
+	return userID, issuedAt, err
 }
 
 func (a *service) parseRefreshToken(token string) error {

@@ -18,6 +18,7 @@ type Credentials struct {
 	Email         string
 	Password      string
 	VerifiedEmail bool
+	IssuedAt      int64
 }
 
 type Google struct {
