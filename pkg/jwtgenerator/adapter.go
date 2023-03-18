@@ -2,8 +2,8 @@ package jwtgenerator
 
 import (
 	"auth/internal/app"
+	"github.com/Hanekawa-chan/jwt"
 	jwtx "github.com/golang-jwt/jwt/v4"
-	"github.com/kanji-team/jwt"
 )
 
 type adapter struct {

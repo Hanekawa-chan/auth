@@ -3,8 +3,8 @@ package grpcserver
 import (
 	"auth/internal/app"
 	"auth/proto/services"
+	"github.com/Hanekawa-chan/grpc-server"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
-	"github.com/kanji-team/grpc-server"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"

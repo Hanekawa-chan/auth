@@ -3,6 +3,8 @@ module auth
 go 1.19
 
 require (
+	github.com/Hanekawa-chan/grpc-server v0.0.0-20230318155242-581d5ff69816
+	github.com/Hanekawa-chan/jwt v0.0.0-20230318155330-67f90f27e354
 	github.com/dlmiddlecote/sqlstats v1.0.2
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/golang-migrate/migrate/v4 v4.15.2
@@ -11,7 +13,6 @@ require (
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/jackc/pgx/v5 v5.3.0
 	github.com/jmoiron/sqlx v1.3.5
-	github.com/kanji-team/grpc-server v0.0.0-20230127163306-1ca804701b9e
 	github.com/kanji-team/jwt v0.0.0-20230219122441-b5cfacb41df8
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/prometheus/client_golang v1.14.0

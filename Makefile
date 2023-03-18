@@ -1,5 +1,5 @@
 PROJECT_NAME := auth
-PROJECT := github.com/kanji-team/auth
+PROJECT := github.com/Hanekawa-chan/auth
 
 VERSION := $(shell git describe --tags)
 COMMIT := $(shell git rev-parse --short HEAD)
