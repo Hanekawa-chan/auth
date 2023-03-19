@@ -15,6 +15,8 @@ services:
       KANJI_AUTH_POSTGRES_PASSWORD: "password"
       KANJI_AUTH_JWT_SECRET_KEY: "somekey"
       KANJI_AUTH_MIGRATIONS_SOURCE_URL: "file://migrations"
+    depends_on:
+      - db
   user_service:
     build:
       context: ../user
@@ -30,9 +32,11 @@ services:
       KANJI_USER_POSTGRES_PASSWORD: "password"
       KANJI_USER_JWT_SECRET_KEY: "somekey"
       KANJI_USER_MIGRATIONS_SOURCE_URL: "file://migrations"
-  auth_db:
+    depends_on:
+      - db
+  db:
     image: postgres
-    container_name: auth_db
+    container_name: db
     restart: always
     environment:
       POSTGRES_USER: "user"
