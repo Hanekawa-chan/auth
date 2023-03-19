@@ -8,6 +8,7 @@ services:
       - "6080:6080"
     restart: always
     environment:
+      KANJI_AUTH_GRPC_ADDRESS: ":6080"
       KANJI_AUTH_POSTGRES_NAME: "auth"
       KANJI_AUTH_POSTGRES_HOST: "db"
       KANJI_AUTH_POSTGRES_PORT: 5432
@@ -26,6 +27,7 @@ services:
       - "5000:5000"
     restart: always
     environment:
+      KANJI_USER_GRPC_ADDRESS: ":5000"
       KANJI_USER_POSTGRES_NAME: "user"
       KANJI_USER_POSTGRES_HOST: "db"
       KANJI_USER_POSTGRES_PORT: 5432
