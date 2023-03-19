@@ -3,8 +3,6 @@ services:
   auth_service:
     build:
       context: .
-    #      args:
-    #        GITHUB_TOKEN: "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"
     container_name: auth_service
     ports:
       - "6080:6080"
