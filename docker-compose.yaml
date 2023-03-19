@@ -9,7 +9,7 @@ services:
     restart: always
     environment:
       KANJI_AUTH_POSTGRES_NAME: "auth"
-      KANJI_AUTH_POSTGRES_HOST: "auth_db"
+      KANJI_AUTH_POSTGRES_HOST: "db"
       KANJI_AUTH_POSTGRES_PORT: 5432
       KANJI_AUTH_POSTGRES_USER: "user"
       KANJI_AUTH_POSTGRES_PASSWORD: "password"
@@ -26,7 +26,7 @@ services:
     restart: always
     environment:
       KANJI_USER_POSTGRES_NAME: "user"
-      KANJI_USER_POSTGRES_HOST: "auth_db"
+      KANJI_USER_POSTGRES_HOST: "db"
       KANJI_USER_POSTGRES_PORT: 5432
       KANJI_USER_POSTGRES_USER: "user"
       KANJI_USER_POSTGRES_PASSWORD: "password"
