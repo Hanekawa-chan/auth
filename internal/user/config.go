@@ -4,5 +4,5 @@ import "time"
 
 type Config struct {
 	Address string        `envconfig:"USER_ADDRESS"`
-	Timeout time.Duration `envconfig:"USER_TIMEOUT"`
+	Timeout time.Duration `envconfig:"USER_TIMEOUT" default:"2m"`
 }
