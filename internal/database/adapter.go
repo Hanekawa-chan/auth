@@ -71,7 +71,6 @@ func NewAdapter(logger *zerolog.Logger, config *Config) (app.Database, error) {
 
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
 		logger.Err(err).Msg("db migrate up")
-		return nil, err
 	}
 
 	a := &adapter{
