@@ -3,8 +3,8 @@ package app
 import (
 	"auth/proto/services"
 	"context"
+	"github.com/Hanekawa-chan/jwt"
 	"github.com/google/uuid"
-	jwt "github.com/kanji-team/jwt"
 )
 
 func (a *service) Link(ctx context.Context, req *services.AuthRequest) error {
